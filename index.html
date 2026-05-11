@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Administrasi Ujian - SDN Muara Bakti 01</title>
+    <title>Sistem Administrasi Ujian - Rohiman Supriyadi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk Icon Realistis -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #064e3b;
-            --primary-dark: #022c22;
-            --accent: #10b981;
-            --bg-gray: #f1f5f9;
+            /* Tema Candy Red Neon */
+            --candy-dark: #3a0000;
+            --candy-red: #8B0000;
+            --candy-bright: #e60000;
+            --neon-glow: rgba(255, 20, 20, 0.4);
+            --accent: #ff4d4d;
+            --bg-gray: #f8fafc;
         }
 
         body, html {
@@ -18,77 +23,129 @@
             height: 100%; width: 100%;
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow: hidden; 
-            background-color: var(--primary);
+            background-color: var(--candy-dark);
         }
 
-        /* HEADER DASHBOARD */
+        /* HEADER DASHBOARD DENGAN EFEK GLASSMORPHISM */
         .top-nav {
-            height: 75px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            height: 85px;
+            background: linear-gradient(135deg, var(--candy-dark) 0%, var(--candy-red) 100%);
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            padding: 0 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 15px var(--neon-glow);
             z-index: 2000;
             position: relative;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             color: white;
-            min-width: 250px;
+            min-width: 280px;
             flex-shrink: 0;
         }
 
-        .brand img { height: 40px; }
-        .brand h1 { font-size: 14px; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .brand img { 
+            height: 50px; 
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+        }
+        
+        .brand h1 { 
+            font-size: 16px; 
+            margin: 0; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            text-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        /* Styling Rohiman Supriyadi (Putih Tebal) */
+        .brand small {
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            display: block;
+            margin-top: 2px;
+        }
 
         /* MENU UTAMA - Responsif Scroll */
         .nav-links {
             display: flex;
-            gap: 8px;
+            gap: 12px;
             margin-left: auto;
-            overflow-x: auto; /* Memungkinkan geser menu di layar kecil */
-            padding: 5px 0;
+            overflow-x: auto;
+            padding: 10px 0;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Sembunyikan scrollbar tapi tetap bisa scroll */
+        /* Sembunyikan scrollbar */
         .nav-links::-webkit-scrollbar { display: none; }
 
         .nav-item {
-            padding: 10px 14px;
-            color: rgba(255,255,255,0.7);
+            padding: 12px 18px;
+            color: rgba(255,255,255,0.6);
             text-decoration: none;
             font-weight: 700;
             font-size: 11px;
-            border-radius: 8px;
-            transition: 0.3s;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             text-transform: uppercase;
-            white-space: nowrap; /* Teks menu tidak turun ke bawah */
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            transition: 0.3s;
         }
 
         .nav-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .nav-item.active {
-            background: var(--accent);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--neon-glow), inset 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        .nav-item.active i {
+            color: var(--accent);
+            filter: drop-shadow(0 0 5px var(--accent));
         }
 
         /* CONTAINER IFRAME */
         .main-container {
             width: 100%;
-            height: calc(100vh - 75px);
+            height: calc(100vh - 85px);
             background: var(--bg-gray);
+            position: relative;
+        }
+
+        .main-container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 10px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+            pointer-events: none;
+            z-index: 10;
         }
 
         iframe {
@@ -110,18 +167,39 @@
             <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
             <div>
                 <h1>ADMIN PSAJ 2026</h1>
-                <small style="color: var(--accent); font-weight: bold; font-size: 9px;">SDN MUARA BAKTI 01</small>
+                <small>Rohiman Supriyadi - SDNMB01</small>
             </div>
         </div>
 
         <nav class="nav-links">
-            <a href="javascript:void(0)" onclick="loadApp('app-album.html', this)" class="nav-item active">🖼️ Album</a>
-            <a href="javascript:void(0)" onclick="loadApp('app-ljk.html', this)" class="nav-item">📝 LJK</a>
-            <a href="javascript:void(0)" onclick="loadApp('app-monitoring.html', this)" class="nav-item">📋 Monitor</a>
-            <a href="javascript:void(0)" onclick="loadApp('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/', this)" class="nav-item">🪪 Kartu Ujian</a>
-            <a href="javascript:void(0)" onclick="loadApp('https://imanschool.my.id/aplikasi-nilai/#/login', this)" class="nav-item">📊 Olah Nilai</a>
-            <a href="javascript:void(0)" onclick="loadApp('app-meja-v2.html', this)" class="nav-item">📑 Meja V2</a>
-            <a href="javascript:void(0)" onclick="loadApp('app-nomor-meja.html', this)" class="nav-item">🔢 No Meja</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-album.html', this)" class="nav-item active">
+                <i class="fa-solid fa-images"></i>
+                <span>Album</span>
+            </a>
+            <a href="javascript:void(0)" onclick="loadApp('app-ljk.html', this)" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>LJK</span>
+            </a>
+            <a href="javascript:void(0)" onclick="loadApp('app-monitoring.html', this)" class="nav-item">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <span>Monitor</span>
+            </a>
+            <a href="javascript:void(0)" onclick="loadApp('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/', this)" class="nav-item">
+                <i class="fa-solid fa-id-card"></i>
+                <span>Kartu Ujian</span>
+            </a>
+            <a href="javascript:void(0)" onclick="loadApp('https://imanschool.my.id/aplikasi-nilai/#/login', this)" class="nav-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Olah Nilai</span>
+            </a>
+            <a href="javascript:void(0)" onclick="loadApp('app-meja-v2.html', this)" class="nav-item">
+                <i class="fa-solid fa-table-cells"></i>
+                <span>Meja V2</span>
+            </a>
+            <a href="javascript:void(0)" onclick="loadApp('app-nomor-meja.html', this)" class="nav-item">
+                <i class="fa-solid fa-list-ol"></i>
+                <span>No Meja</span>
+            </a>
         </nav>
     </header>
 
@@ -131,19 +209,15 @@
 
     <script>
         function loadApp(url, element) {
-            // Ganti Source Iframe
             document.getElementById('content-frame').src = url;
-
-            // Update Class Active pada Menu
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.classList.remove('active');
             });
             element.classList.add('active');
         }
 
-        // Konfirmasi sebelum meninggalkan halaman jika sedang input data
         window.onbeforeunload = function() {
-            return "Pastikan data Anda sudah tersimpan.";
+            return "Sistem mendeteksi aktivitas input. Pastikan data Anda sudah aman.";
         };
     </script>
 </body>
