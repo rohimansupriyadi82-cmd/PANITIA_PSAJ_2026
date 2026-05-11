@@ -3,102 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin PSAJ - Rohiman Supriyadi</title>
+    <title>Dashboard Admin - Rohiman Supriyadi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --candy-dark: #3a0000;
-            --candy-red: #8B0000;
-            --neon-glow: rgba(255, 20, 20, 0.4);
-            --accent: #ff4d4d;
-            --bg-gray: #f1f5f9;
+            /* Palette: Midnight Deep Teal */
+            --bg-dark: #060d13;
+            --primary-teal: #0d1f23;
+            --accent-neon: #64ffda; /* Hijau Mint Neon */
+            --glass-white: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-silver: #e2e8f0;
         }
 
-        /* Full Screen Flex Layout */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body, html {
             margin: 0; padding: 0;
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
-            flex-direction: column; /* Header di atas, Konten di bawah */
+            flex-direction: column;
             overflow: hidden;
-            background-color: var(--candy-dark);
+            /* Background Mesh Gradient yang Mewah */
+            background: radial-gradient(circle at top right, #102a2d, #060d13);
+        }
+
+        /* Pattern halus di background */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2364ffda' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
         }
 
         /* HEADER DASHBOARD */
         .top-nav {
-            flex-shrink: 0; /* Header tidak boleh mengecil */
-            background: linear-gradient(135deg, var(--candy-dark) 0%, var(--candy-red) 100%);
-            padding: 10px 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+            background: rgba(6, 13, 19, 0.8);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 12px 20px;
             z-index: 2000;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 992px) {
             .top-nav {
-                display: flex;
+                flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
-                padding: 10px 30px;
-                height: 80px;
+                height: 90px;
+                padding: 0 40px;
             }
         }
 
-        /* BRAND SECTION */
+        /* BRANDING */
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .brand { margin-bottom: 0; }
+            gap: 15px;
         }
 
         .brand img { 
-            height: 35px; 
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.4));
+            height: 40px; 
+            filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.3));
         }
-        
+
         .brand-text h1 { 
             font-size: 14px; 
             margin: 0; 
-            color: white;
+            color: var(--text-silver);
             text-transform: uppercase; 
-            letter-spacing: 1px;
-            font-weight: 800;
-            text-shadow: 0 0 10px var(--neon-glow);
+            letter-spacing: 2px;
+            font-weight: 700;
+            opacity: 0.8;
         }
 
-        .brand-text small {
-            color: #ffffff; /* Nama Rohiman Supriyadi Putih */
+        .brand-text b {
+            color: #ffffff;
             font-weight: 800;
-            font-size: 11px;
+            font-size: 13px;
             text-transform: uppercase;
             display: block;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
-        /* MENU NAVIGASI - SCROLLABLE */
+        /* NAVIGASI HORIZONTAL SCROLL */
         .nav-links {
             display: flex;
             gap: 10px;
-            overflow-x: auto; /* Aktifkan geser kanan-kiri */
-            overflow-y: hidden;
-            padding: 5px 2px 10px 2px;
-            scrollbar-width: none; /* Sembunyikan scrollbar Firefox */
+            overflow-x: auto;
+            padding: 5px 2px 12px 2px;
+            scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
         }
-
-        .nav-links::-webkit-scrollbar { display: none; } /* Sembunyikan scrollbar Chrome */
+        .nav-links::-webkit-scrollbar { display: none; }
 
         .nav-item {
-            flex: 0 0 auto; /* Item tidak boleh gepeng/menyusut */
-            padding: 10px 15px;
-            color: rgba(255,255,255,0.7);
+            flex: 0 0 auto;
+            padding: 10px 20px;
+            color: rgba(255,255,255,0.4);
             text-decoration: none;
             font-weight: 700;
             font-size: 10px;
@@ -106,30 +117,36 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.3s;
-            min-width: 75px;
+            gap: 6px;
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
         }
 
-        .nav-item i { font-size: 16px; }
+        .nav-item i { 
+            font-size: 18px; 
+        }
+
+        .nav-item:hover {
+            color: var(--accent-neon);
+            border-color: var(--accent-neon);
+            background: rgba(100, 255, 218, 0.05);
+        }
 
         .nav-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-color: var(--accent);
-            box-shadow: 0 0 15px var(--neon-glow);
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--accent-neon);
+            border-color: var(--accent-neon);
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.2);
         }
 
-        .nav-item.active i { color: var(--accent); }
-
-        /* CONTAINER APLIKASI (IFRAME) */
+        /* IFRAME CONTAINER */
         .main-container {
-            flex-grow: 1; /* Mengisi seluruh sisa ruang layar */
-            background: var(--bg-gray);
+            flex-grow: 1;
+            background: #ffffff; /* Konten aplikasi tetap putih agar mudah dibaca */
             width: 100%;
-            height: 100%; /* Penting agar iframe muncul */
+            height: 100%;
             position: relative;
         }
 
@@ -140,80 +157,92 @@
             display: block;
         }
 
+        /* Progress Bar Animasi */
+        .progress-line {
+            position: absolute;
+            top: 0; left: 0; height: 3px;
+            background: var(--accent-neon);
+            width: 0;
+            z-index: 3000;
+            transition: 0.4s ease;
+            box-shadow: 0 0 10px var(--accent-neon);
+        }
+
         @media print {
             .top-nav { display: none !important; }
-            body { height: auto; overflow: visible; }
         }
     </style>
 </head>
 <body>
 
+    <div id="loader" class="progress-line"></div>
+
     <header class="top-nav">
         <div class="brand">
             <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
             <div class="brand-text">
-                <h1>ADMIN PSAJ 2026</h1>
-                <small>Rohiman Supriyadi</small>
+                <h1>PANITIA PSAJ 2026</h1>
+                <b>Rohiman Supriyadi</b>
             </div>
         </div>
 
         <nav class="nav-links">
             <a href="javascript:void(0)" onclick="loadApp('app-album.html', this)" class="nav-item active">
-                <i class="fa-solid fa-images"></i>
+                <i class="fa-solid fa-layer-group"></i>
                 <span>Album</span>
             </a>
             <a href="javascript:void(0)" onclick="loadApp('app-ljk.html', this)" class="nav-item">
-                <i class="fa-solid fa-file-signature"></i>
+                <i class="fa-solid fa-file-pen"></i>
                 <span>LJK</span>
             </a>
             <a href="javascript:void(0)" onclick="loadApp('app-monitoring.html', this)" class="nav-item">
-                <i class="fa-solid fa-clipboard-check"></i>
-                <span>Monitor</span>
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>INSTR-PSAJ</span>
             </a>
             <a href="javascript:void(0)" onclick="loadApp('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/', this)" class="nav-item">
-                <i class="fa-solid fa-id-card"></i>
+                <i class="fa-solid fa-address-card"></i>
                 <span>Kartu</span>
             </a>
             <a href="javascript:void(0)" onclick="loadApp('https://imanschool.my.id/aplikasi-nilai/#/login', this)" class="nav-item">
-                <i class="fa-solid fa-chart-line"></i>
+                <i class="fa-solid fa-database"></i>
                 <span>Nilai</span>
             </a>
             <a href="javascript:void(0)" onclick="loadApp('app-meja-v2.html', this)" class="nav-item">
-                <i class="fa-solid fa-table-cells"></i>
+                <i class="fa-solid fa-border-all"></i>
                 <span>Meja V2</span>
             </a>
             <a href="javascript:void(0)" onclick="loadApp('app-nomor-meja.html', this)" class="nav-item">
-                <i class="fa-solid fa-list-ol"></i>
+                <i class="fa-solid fa-hashtag"></i>
                 <span>No Meja</span>
             </a>
         </nav>
     </header>
 
-    <!-- Kontainer Iframe yang akan selalu mengisi sisa layar -->
     <main class="main-container">
         <iframe id="content-frame" src="app-album.html" allow="print"></iframe>
     </main>
 
     <script>
         function loadApp(url, element) {
-            document.getElementById('content-frame').src = url;
+            const frame = document.getElementById('content-frame');
+            const loader = document.getElementById('loader');
             
-            // Hapus class active dari semua menu
-            document.querySelectorAll('.nav-item').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            loader.style.width = '40%';
+            frame.style.opacity = '0.5';
+            frame.src = url;
+
+            frame.onload = function() {
+                loader.style.width = '100%';
+                setTimeout(() => { 
+                    loader.style.width = '0';
+                    frame.style.opacity = '1';
+                }, 400);
+            };
             
-            // Tambah class active ke menu yang diklik
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
-            
-            // Scroll otomatis ke tengah saat item diklik (untuk mobile)
             element.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
-
-        // Mencegah kehilangan data
-        window.onbeforeunload = function() {
-            return "Sistem mendeteksi aktivitas input. Pastikan data Anda sudah aman.";
-        };
     </script>
 </body>
 </html>
