@@ -17,17 +17,17 @@
             margin: 0; padding: 0;
             height: 100%; width: 100%;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow: hidden; /* Mencegah double scrollbar */
+            overflow: hidden; 
             background-color: var(--primary);
         }
 
         /* HEADER DASHBOARD */
         .top-nav {
-            height: 70px;
+            height: 75px;
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
             display: flex;
             align-items: center;
-            padding: 0 25px;
+            padding: 0 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 2000;
             position: relative;
@@ -36,33 +36,41 @@
         .brand {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             color: white;
-            min-width: 300px;
+            min-width: 250px;
+            flex-shrink: 0;
         }
 
-        .brand img { height: 45px; }
-        .brand h1 { font-size: 16px; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .brand img { height: 40px; }
+        .brand h1 { font-size: 14px; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* MENU UTAMA */
+        /* MENU UTAMA - Responsif Scroll */
         .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-left: auto;
+            overflow-x: auto; /* Memungkinkan geser menu di layar kecil */
+            padding: 5px 0;
+            -webkit-overflow-scrolling: touch;
         }
 
+        /* Sembunyikan scrollbar tapi tetap bisa scroll */
+        .nav-links::-webkit-scrollbar { display: none; }
+
         .nav-item {
-            padding: 10px 18px;
+            padding: 10px 14px;
             color: rgba(255,255,255,0.7);
             text-decoration: none;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 11px;
             border-radius: 8px;
             transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-transform: uppercase;
+            white-space: nowrap; /* Teks menu tidak turun ke bawah */
         }
 
         .nav-item:hover {
@@ -79,7 +87,7 @@
         /* CONTAINER IFRAME */
         .main-container {
             width: 100%;
-            height: calc(100vh - 70px);
+            height: calc(100vh - 75px);
             background: var(--bg-gray);
         }
 
@@ -101,15 +109,19 @@
         <div class="brand">
             <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
             <div>
-                <h1>PANITIA PSAJ 2026</h1>
-                <small style="color: var(--accent); font-weight: bold; font-size: 10px;">SDN MUARA BAKTI 01</small>
+                <h1>ADMIN PSAJ 2026</h1>
+                <small style="color: var(--accent); font-weight: bold; font-size: 9px;">SDN MUARA BAKTI 01</small>
             </div>
         </div>
 
         <nav class="nav-links">
-            <a href="javascript:void(0)" onclick="loadApp('app-album.html', this)" class="nav-item active">🖼️ Album & Denah</a>
-            <a href="javascript:void(0)" onclick="loadApp('app-ljk.html', this)" class="nav-item">📝 LJK Merdeka</a>
-            <a href="javascript:void(0)" onclick="loadApp('app-monitoring.html', this)" class="nav-item">📋 Monitoring</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-album.html', this)" class="nav-item active">🖼️ Album</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-ljk.html', this)" class="nav-item">📝 LJK</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-monitoring.html', this)" class="nav-item">📋 Monitor</a>
+            <a href="javascript:void(0)" onclick="loadApp('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/', this)" class="nav-item">🪪 Kartu Ujian</a>
+            <a href="javascript:void(0)" onclick="loadApp('https://imanschool.my.id/aplikasi-nilai/#/login', this)" class="nav-item">📊 Olah Nilai</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-meja-v2.html', this)" class="nav-item">📑 Meja V2</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-nomor-meja.html', this)" class="nav-item">🔢 No Meja</a>
         </nav>
     </header>
 
@@ -129,9 +141,9 @@
             element.classList.add('active');
         }
 
-        // Mencegah konfirmasi reload jika sedang input data
+        // Konfirmasi sebelum meninggalkan halaman jika sedang input data
         window.onbeforeunload = function() {
-            return "Pastikan data Anda sudah tersimpan sebelum keluar.";
+            return "Pastikan data Anda sudah tersimpan.";
         };
     </script>
 </body>
