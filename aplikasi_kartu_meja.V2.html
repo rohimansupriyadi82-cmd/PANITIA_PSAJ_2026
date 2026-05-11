@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kartu Ujian A4 - Left Sidebar Precision v22</title>
+    <style>
+        /* RESET & DASAR */
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-family: 'Arial', sans-serif; margin: 0; background: #1a202c; color: white; display: flex; min-height: 100vh; }
+
+        /* SIDEBAR (PANEL KONTROL) - DISEBELAH KIRI */
+        .no-print { 
+            width: 380px; 
+            height: 100vh; 
+            background: #2d3748; 
+            border-right: 5px solid #d32f2f; 
+            padding: 20px; 
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            overflow-y: auto; 
+            z-index: 1000;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+        }
+
+        /* AREA KONTEN UTAMA (DISEBELAH KANAN SIDEBAR) */
+        #main-content { 
+            margin-left: 380px; 
+            flex: 1; 
+            background: #f0f4f8; 
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        /* STYLING INPUT DI SIDEBAR */
+        .grid-input { display: flex; flex-direction: column; gap: 12px; }
+        .input-box { background: #1a202c; padding: 12px; border-radius: 6px; border: 1px solid #4a5568; }
+        
+        textarea, input, select { 
+            width: 100%; padding: 10px; margin-top: 5px; 
+            background: #2d3748; color: white; border: 1px solid #4a5568; 
+            font-size: 12px; border-radius: 4px; outline: none;
+        }
+        textarea:focus, input:focus, select:focus { border-color: #d32f2f; box-shadow: 0 0 5px rgba(211, 47, 47, 0.5); }
+        
+        label { font-size: 10px; font-weight: bold; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn-print { padding: 14px; background: #d32f2f; font-weight: bold; border: none; cursor: pointer; color: white; border-radius: 4px; transition: 0.3s; }
+        .btn-save { padding: 14px; background: #2f855a; font-weight: bold; border: none; cursor: pointer; color: white; border-radius: 4px; transition: 0.3s; }
+        .btn-clear { padding: 10px; background: #4a5568; font-weight: bold; border: none; cursor: pointer; color: white; border-radius: 4px; font-size: 11px; }
+        
+        .btn-print:hover { background: #b91c1c; transform: translateY(-2px); }
+        .btn-save:hover { background: #276749; transform: translateY(-2px); }
+
+        .save-notif { font-size: 11px; color: #48bb78; margin-top: 5px; display: block; text-align: center; font-weight: bold; }
+
+        /* AREA CETAK - A4 PRESISI */
+        #print-area { padding-top: 20px; }
+        .page-wrapper {
+            width: 210mm; min-height: 297mm; padding: 10mm; margin: 0 auto 10mm auto;
+            background: white; display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; gap: 8mm; 
+            page-break-after: always; position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* KARTU */
+        .card { 
+            width: 185mm; height: 85mm; background: white; color: black; 
+            border: 2pt solid #d32f2f; display: flex; overflow: hidden; 
+            position: relative; border-radius: 8px; flex-shrink: 0;
+        }
+
+        /* WATERMARK GLOBAL */
+        .watermark-global {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; opacity: 0.05; font-size: 7pt; font-weight: bold;
+            display: flex; flex-wrap: wrap; align-content: space-around; justify-content: space-around;
+            transform: rotate(-15deg) scale(1.4); color: #d32f2f; z-index: 1;
+        }
+
+        /* SISI KIRI KARTU */
+        .side-left { 
+            width: 12mm; border-right: 1.5pt solid #d32f2f; 
+            display: flex; align-items: center; justify-content: center; 
+            background: #d32f2f; position: relative; z-index: 5;
+        }
+        .v-text { transform: rotate(-90deg); white-space: nowrap; font-size: 10pt; font-weight: bold; color: white; }
+
+        .center-data { width: 85mm; border-right: 1.5pt solid #d32f2f; padding: 3mm 4mm; display: flex; flex-direction: column; position: relative; z-index: 5; background: transparent; }
+        
+        /* KOP - DUAL LOGO - TATA LETAK PRESISI */
+        .kop { display: flex; align-items: center; justify-content: space-between; height: 20mm; border-bottom: 2pt solid #d32f2f; padding-bottom: 2mm; }
+        .kop .logo-box { width: 15mm; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .kop img { max-width: 100%; max-height: 15mm; object-fit: contain; }
+        
+        .kop-text { text-align: center; flex-grow: 1; padding: 0 5px; }
+        .kop-text h1 { margin: 0; font-size: 9pt; text-transform: uppercase; line-height: 1.2; font-weight: 900; color: #b91c1c; }
+        .kop-text p { margin: 1px 0 0 0; font-size: 6pt; line-height: 1.2; font-weight: bold; color: #333; }
+
+        .banner { background: linear-gradient(45deg, #d32f2f, #ff4d4d); color: white; text-align: center; padding: 3px; margin: 2mm 0; border-radius: 4px; }
+        .banner .jdl-utama { font-weight: bold; font-size: 9pt; display: block; letter-spacing: 1px; }
+        
+        .bio { width: 100%; font-size: 8pt; border-collapse: collapse; margin-top: 5px; background: transparent; }
+        .bio td { padding: 2px 0; font-weight: bold; vertical-align: top; }
+
+        .footer { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 1mm; height: 25mm; }
+        
+        .box-ruang { border: 2pt solid #d32f2f; width: 20mm; text-align: center; border-radius: 4px; overflow: hidden; background: white; margin-bottom: 1mm; }
+        .ruang-h { font-size: 7pt; display: block; border-bottom: 1.5pt solid #d32f2f; font-weight: bold; background: #d32f2f; color: white; }
+        .ruang-v { font-size: 13pt; font-weight: bold; display: block; padding: 2px 0; color: #b91c1c; }
+
+        .sign { text-align: center; font-size: 7pt; width: 50mm; position: relative; line-height: 1.2; }
+        .stempel-img { position: absolute; width: 18mm; left: 0; top: 4mm; opacity: 0.7; z-index: 6; pointer-events: none; }
+        .ttd-img { position: absolute; width: 22mm; left: 50%; transform: translateX(-50%); top: 5mm; z-index: 7; pointer-events: none; }
+
+        /* SISI JADWAL */
+        .side-right { flex: 1; padding: 2mm 3mm; display: flex; flex-direction: column; overflow: hidden; background: #fffafb; position: relative; z-index: 5; }
+        .sch-h { font-size: 8.5pt; font-weight: bold; text-align: center; color: #d32f2f; margin-bottom: 3px; border-bottom: 1px dashed #d32f2f; padding-bottom: 2px; }
+        
+        .table-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+        .sch-table { width: 100%; border-collapse: collapse; font-size: 6pt; table-layout: fixed; background: transparent; }
+        .sch-table th { background: linear-gradient(to bottom, #ff4d4d, #d32f2f); color: white; border: 1px solid #b91c1c; padding: 4px 1px; }
+        .sch-table td { border: 1px solid #feb2b2; padding: 3px 1px; text-align: center; color: #741b1b; font-weight: 700; background: rgba(255, 255, 255, 0.4); word-wrap: break-word; }
+
+        .motivation { font-size: 8.5pt; font-weight: 900; color: #d32f2f; text-align: center; font-style: italic; margin-top: auto; padding-bottom: 2mm; text-transform: uppercase; }
+
+        /* PENGATURAN CETAK */
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: white; display: block; }
+            .no-print { display: none !important; }
+            #main-content { margin-left: 0 !important; background: white; width: 100%; }
+            .page-wrapper { margin: 0; border: none; box-shadow: none; height: 297mm; width: 210mm; padding: 10mm; }
+            #print-area { background: white; padding: 0; }
+            .card { border: 1.5pt solid #d32f2f; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR KIRI -->
+<div class="no-print">
+    <h2 style="margin: 0 0 15px 0; font-size: 18px; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">💎 CARD PRO v22</h2>
+    
+    <div class="grid-input">
+        <div class="input-box">
+            <label>🏫 Identitas Sekolah</label>
+            <input type="text" id="inSekolah" placeholder="Nama Sekolah">
+            <textarea id="inAlamat" placeholder="Contoh:&#10;Jl. Bayangkara&#10;Kec. Babelan Kab. Bekasi" rows="3"></textarea>
+            <div style="display:flex; gap:5px; margin-top:10px">
+                <div style="flex:1"><label>Kota</label><input type="text" id="inKota" placeholder="Bekasi"></div>
+                <div style="flex:1"><label>Tgl Kartu</label><input type="date" id="inTglCetak"></div>
+            </div>
+        </div>
+
+        <div class="input-box">
+            <label>📂 Database Peserta (CSV)</label>
+            <input type="file" id="inCsv" onchange="importCSV(this)">
+            <textarea id="inSiswa" rows="3" placeholder="Nama;NISN;Kelas;Lahir;Tgl;Meja;Ruang" oninput="updateDropdownKelas()"></textarea>
+            
+            <label style="margin-top:10px; display:block">🎯 Filter Kelas</label>
+            <select id="selKelas" onchange="render()">
+                <option value="ALL">-- SEMUA KELAS --</option>
+            </select>
+            <input type="text" id="inTP" value="2025/2026" placeholder="Tahun Pelajaran" style="margin-top:10px">
+        </div>
+
+        <div class="input-box">
+            <label>🖼️ Logistik (Stempel & TTD)</label>
+            <div style="display:flex; gap:5px">
+                <div style="flex:1"><label>Stempel</label><input type="file" onchange="loadMedia(this, 'stempel')"></div>
+                <div style="flex:1"><label>TTD</label><input type="file" onchange="loadMedia(this, 'ttd')"></div>
+            </div>
+            <input type="text" id="inJudulKartu" value="KARTU PESERTA UJIAN" style="margin-top:10px">
+            <input type="text" id="inTtdNama" placeholder="Nama Penanggung Jawab" style="margin-top:10px">
+            <input type="text" id="inNip" placeholder="NIP: 198XXXXXXXX">
+        </div>
+
+        <div class="input-box">
+            <label>📅 Jadwal (Hari | Waktu | Mapel)</label>
+            <textarea id="inJadwal" rows="4" placeholder="Senin, 02-06 | 07.30 | Mapel">Senin, 02-06-2025 | 07.30 - 09.00 | B. Indonesia
+Selasa, 03-06-2025 | 07.30 - 09.00 | Matematika
+Rabu, 04-06-2025 | 07.30 - 09.00 | IPAS</textarea>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-save" onclick="manualSave()">💾 UPDATE TAMPILAN</button>
+        <button class="btn-print" onclick="window.print()">📄 CETAK SEKARANG (A4)</button>
+        <button class="btn-clear" onclick="clearData()">🗑️ RESET DATA</button>
+        <span class="save-notif" id="saveStat">Ready.</span>
+    </div>
+</div>
+
+<!-- KONTEN KANAN -->
+<div id="main-content">
+    <div id="print-area"></div>
+</div>
+
+<script>
+    let mediaFiles = { stempel: '', ttd: '' };
+
+    function formatIndoDate(dateStr) {
+        if(!dateStr) return "";
+        const opsi = { day: 'numeric', month: 'long', year: 'numeric' };
+        return new Date(dateStr).toLocaleDateString('id-ID', opsi);
+    }
+
+    function formatDateSimple(dateStr) {
+        if(!dateStr) return "";
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
+
+    function updateDropdownKelas() {
+        const sel = document.getElementById('selKelas');
+        const currentVal = sel.value; 
+        const lines = document.getElementById('inSiswa').value.split('\n').filter(l => l.trim());
+        let daftarKelas = new Set();
+        lines.forEach(line => {
+            const d = line.split(/[;|\t]/);
+            if(d[2]) daftarKelas.add(d[2].trim());
+        });
+        sel.innerHTML = '<option value="ALL">-- SEMUA KELAS --</option>';
+        Array.from(daftarKelas).sort().forEach(kls => {
+            const opt = document.createElement('option');
+            opt.value = kls;
+            opt.textContent = kls.toUpperCase();
+            sel.appendChild(opt);
+        });
+        if (Array.from(daftarKelas).includes(currentVal)) sel.value = currentVal;
+    }
+
+    function importCSV(input) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('inSiswa').value = e.target.result.split('\n').filter(l => l.trim()).join('\n');
+            updateDropdownKelas(); 
+            manualSave();
+        };
+        reader.readAsText(input.files[0]);
+    }
+
+    function manualSave() {
+        const data = {
+            sekolah: document.getElementById('inSekolah').value,
+            alamat: document.getElementById('inAlamat').value,
+            tp: document.getElementById('inTP').value,
+            siswa: document.getElementById('inSiswa').value,
+            ttdNama: document.getElementById('inTtdNama').value,
+            nip: document.getElementById('inNip').value,
+            kota: document.getElementById('inKota').value,
+            tglCetak: document.getElementById('inTglCetak').value,
+            jadwal: document.getElementById('inJadwal').value,
+            judulKartu: document.getElementById('inJudulKartu').value,
+            media: mediaFiles
+        };
+        localStorage.setItem('kartuA4_v22', JSON.stringify(data));
+        document.getElementById('saveStat').innerText = "✅ Tersimpan!";
+        setTimeout(() => { document.getElementById('saveStat').innerText = "Ready."; }, 2000);
+        render();
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('kartuA4_v22');
+        if (saved) {
+            const data = JSON.parse(saved);
+            Object.keys(data).forEach(key => {
+                if(key !== 'media') {
+                    const el = document.getElementById('in' + key.charAt(0).toUpperCase() + key.slice(1));
+                    if(el) el.value = data[key];
+                }
+            });
+            if(data.media) mediaFiles = data.media;
+            updateDropdownKelas();
+            render();
+        }
+    }
+
+    function loadMedia(input, type) {
+        const reader = new FileReader();
+        reader.onload = (e) => { mediaFiles[type] = e.target.result; manualSave(); };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function clearData() { if(confirm("Hapus semua data?")) { localStorage.removeItem('kartuA4_v22'); location.reload(); } }
+
+    function render() {
+        const area = document.getElementById('print-area');
+        const filterKelas = document.getElementById('selKelas').value;
+        let rawSiswa = document.getElementById('inSiswa').value.split('\n').filter(l => l.trim());
+        
+        let siswaInput = rawSiswa.filter(line => {
+            if (filterKelas === "ALL") return true;
+            const d = line.split(/[;|\t]/);
+            return d.length >= 3 && d[2].trim() === filterKelas;
+        });
+
+        const jadwalInput = document.getElementById('inJadwal').value.split('\n').filter(l => l.trim());
+        const namaSekolah = document.getElementById('inSekolah').value || 'NAMA SEKOLAH';
+        const alamatSekolah = document.getElementById('inAlamat').value || 'Alamat Belum Diisi';
+        const judulKartu = document.getElementById('inJudulKartu').value || 'KARTU PESERTA UJIAN';
+        const kotaTgl = (document.getElementById('inKota').value || 'Kota') + ", " + formatIndoDate(document.getElementById('inTglCetak').value);
+
+        let rowsJadwal = jadwalInput.map(l => {
+            const c = l.split('|');
+            return `<tr><td>${c[0]||''}</td><td>${c[1]||''}</td><td>${c[2]||''}</td></tr>`;
+        }).join('');
+
+        let watermarkHtml = '';
+        for(let w=0; w<40; w++) watermarkHtml += '<span>TUT WURI HANDAYANI</span>';
+
+        area.innerHTML = "";
+        
+        for (let i = 0; i < siswaInput.length; i += 3) {
+            const pageWrapper = document.createElement('div');
+            pageWrapper.className = 'page-wrapper';
+            const chunk = siswaInput.slice(i, i + 3);
+
+            pageWrapper.innerHTML = chunk.map(line => {
+                const d = line.split(/[;|\t]/); 
+                if(d.length < 6) return ""; 
+                const ttl = `${d[3] || ''}, ${formatDateSimple(d[4])}`;
+
+                return `
+                <div class="card">
+                    <div class="watermark-global">${watermarkHtml}</div>
+                    <div class="side-left"><div class="v-text">MEJA : ${d[5]}</div></div>
+                    <div class="center-data">
+                        <div class="kop">
+                            <div class="logo-box"><img src="tutwuri_putih.png" onerror="this.style.opacity='0'"></div>
+                            <div class="kop-text">
+                                <h1>${namaSekolah}</h1>
+                                <p>${alamatSekolah.replace(/\n/g, '<br>')}</p>
+                            </div>
+                            <div class="logo-box"><img src="logo_bekasi.jpg" onerror="this.style.opacity='0'"></div>
+                        </div>
+                        <div class="banner">
+                            <span class="jdl-utama">${judulKartu}</span>
+                            <span style="font-size:7pt">TAHUN PELAJARAN ${document.getElementById('inTP').value}</span>
+                        </div>
+                        <table class="bio">
+                            <tr><td style="width:22mm">NAMA</td><td style="width:3mm">:</td><td style="text-transform:uppercase">${d[0]}</td></tr>
+                            <tr><td>NISN</td><td>:</td><td>${d[1]}</td></tr>
+                            <tr><td>KELAS</td><td>:</td><td>${d[2]}</td></tr>
+                            <tr><td>TTL</td><td>:</td><td>${ttl}</td></tr>
+                        </table>
+                        <div class="footer">
+                            <div class="box-ruang"><span class="ruang-h">RUANG</span><span class="ruang-v">${d[6]}</span></div>
+                            <div class="sign">
+                                ${kotaTgl}<br>Penanggung Jawab,<br><br><br>
+                                <b><u>${document.getElementById('inTtdNama').value}</u></b><br>
+                                NIP. ${document.getElementById('inNip').value}
+                                ${mediaFiles.stempel ? `<img src="${mediaFiles.stempel}" class="stempel-img">` : ''}
+                                ${mediaFiles.ttd ? `<img src="${mediaFiles.ttd}" class="ttd-img">` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side-right">
+                        <div class="sch-h">JADWAL UJIAN</div>
+                        <div class="table-wrap">
+                            <table class="sch-table">
+                                <thead><tr><th style="width:36%">HARI</th><th style="width:28%">WAKTU</th><th>MAPEL</th></tr></thead>
+                                <tbody>${rowsJadwal}</tbody>
+                            </table>
+                            <div class="motivation">Selamat Mengerjakan</div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            area.appendChild(pageWrapper);
+        }
+    }
+    window.onload = loadData;
+</script>
+</body>
+</html>
