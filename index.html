@@ -3,180 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sistem Administrasi Ujian - Rohiman Supriyadi</title>
+    <title>Admin PSAJ - Rohiman Supriyadi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome untuk Icon Realistis -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Tema Candy Red Neon */
             --candy-dark: #3a0000;
             --candy-red: #8B0000;
-            --candy-bright: #e60000;
             --neon-glow: rgba(255, 20, 20, 0.4);
             --accent: #ff4d4d;
-            --bg-gray: #f8fafc;
+            --bg-gray: #f1f5f9;
         }
 
+        /* Full Screen Flex Layout */
         body, html {
             margin: 0; padding: 0;
-            height: 100%; width: 100%;
+            height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow: hidden; 
+            display: flex;
+            flex-direction: column; /* Header di atas, Konten di bawah */
+            overflow: hidden;
             background-color: var(--candy-dark);
         }
 
-        /* HEADER DASHBOARD DENGAN EFEK GLASSMORPHISM */
+        /* HEADER DASHBOARD */
         .top-nav {
-            height: 90px;
+            flex-shrink: 0; /* Header tidak boleh mengecil */
             background: linear-gradient(135deg, var(--candy-dark) 0%, var(--candy-red) 100%);
-            display: flex;
-            flex-direction: column; /* Stack on mobile for brand vs menu */
-            justify-content: center;
-            padding: 5px 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 15px var(--neon-glow);
+            padding: 10px 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             z-index: 2000;
-            position: relative;
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         @media (min-width: 768px) {
             .top-nav {
-                height: 85px;
-                flex-direction: row;
+                display: flex;
                 align-items: center;
-                padding: 0 30px;
+                justify-content: space-between;
+                padding: 10px 30px;
+                height: 80px;
             }
         }
 
+        /* BRAND SECTION */
         .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: white;
-            flex-shrink: 0;
-            margin-bottom: 5px;
+            gap: 12px;
+            margin-bottom: 10px;
         }
 
         @media (min-width: 768px) {
-            .brand { margin-bottom: 0; min-width: 280px; }
+            .brand { margin-bottom: 0; }
         }
 
         .brand img { 
             height: 35px; 
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.4));
         }
         
-        @media (min-width: 768px) { .brand img { height: 50px; } }
-        
-        .brand h1 { 
+        .brand-text h1 { 
             font-size: 14px; 
             margin: 0; 
+            color: white;
             text-transform: uppercase; 
             letter-spacing: 1px;
             font-weight: 800;
             text-shadow: 0 0 10px var(--neon-glow);
         }
 
-        /* Nama Rohiman Supriyadi (Putih Tebal) */
-        .brand small {
-            color: #ffffff;
+        .brand-text small {
+            color: #ffffff; /* Nama Rohiman Supriyadi Putih */
             font-weight: 800;
-            font-size: 10px;
-            letter-spacing: 0.5px;
+            font-size: 11px;
             text-transform: uppercase;
             display: block;
-            margin-top: 1px;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
-        /* MENU UTAMA - Responsif Horizontal Scroll */
+        /* MENU NAVIGASI - SCROLLABLE */
         .nav-links {
             display: flex;
-            gap: 8px;
-            overflow-x: auto; /* Aktifkan geser horizontal */
+            gap: 10px;
+            overflow-x: auto; /* Aktifkan geser kanan-kiri */
             overflow-y: hidden;
-            padding: 5px 0;
-            width: 100%;
-            -webkit-overflow-scrolling: touch; /* Halus saat di-swipe di iPhone */
-            scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
+            padding: 5px 2px 10px 2px;
+            scrollbar-width: none; /* Sembunyikan scrollbar Firefox */
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Sembunyikan scrollbar di Chrome/Safari */
-        .nav-links::-webkit-scrollbar { display: none; }
+        .nav-links::-webkit-scrollbar { display: none; } /* Sembunyikan scrollbar Chrome */
 
         .nav-item {
-            padding: 8px 12px;
-            color: rgba(255,255,255,0.6);
+            flex: 0 0 auto; /* Item tidak boleh gepeng/menyusut */
+            padding: 10px 15px;
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
             font-weight: 700;
             font-size: 10px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 4px;
-            text-transform: uppercase;
-            white-space: nowrap; /* Mencegah teks turun ke bawah */
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            min-width: 70px;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+            min-width: 75px;
         }
 
-        @media (min-width: 768px) {
-            .nav-item {
-                padding: 12px 18px;
-                font-size: 11px;
-                min-width: auto;
-            }
-        }
-
-        .nav-item i {
-            font-size: 14px;
-        }
-
-        @media (min-width: 768px) { .nav-item i { font-size: 18px; } }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            transform: translateY(-2px);
-        }
+        .nav-item i { font-size: 16px; }
 
         .nav-item.active {
             background: rgba(255, 255, 255, 0.15);
             color: white;
             border-color: var(--accent);
-            box-shadow: 0 0 10px var(--neon-glow);
+            box-shadow: 0 0 15px var(--neon-glow);
         }
 
-        .nav-item.active i {
-            color: var(--accent);
-            filter: drop-shadow(0 0 5px var(--accent));
-        }
+        .nav-item.active i { color: var(--accent); }
 
-        /* CONTAINER IFRAME */
+        /* CONTAINER APLIKASI (IFRAME) */
         .main-container {
-            width: 100%;
-            height: calc(100vh - 105px); /* Sesuaikan dengan tinggi header mobile */
+            flex-grow: 1; /* Mengisi seluruh sisa ruang layar */
             background: var(--bg-gray);
+            width: 100%;
+            height: 100%; /* Penting agar iframe muncul */
             position: relative;
-        }
-
-        @media (min-width: 768px) {
-            .main-container { height: calc(100vh - 85px); }
         }
 
         iframe {
             width: 100%;
             height: 100%;
             border: none;
+            display: block;
         }
 
         @media print {
             .top-nav { display: none !important; }
-            .main-container { height: 100vh; }
+            body { height: auto; overflow: visible; }
         }
     </style>
 </head>
@@ -185,7 +151,7 @@
     <header class="top-nav">
         <div class="brand">
             <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
-            <div>
+            <div class="brand-text">
                 <h1>ADMIN PSAJ 2026</h1>
                 <small>Rohiman Supriyadi</small>
             </div>
@@ -223,22 +189,28 @@
         </nav>
     </header>
 
-    <div class="main-container">
+    <!-- Kontainer Iframe yang akan selalu mengisi sisa layar -->
+    <main class="main-container">
         <iframe id="content-frame" src="app-album.html" allow="print"></iframe>
-    </div>
+    </main>
 
     <script>
         function loadApp(url, element) {
             document.getElementById('content-frame').src = url;
+            
+            // Hapus class active dari semua menu
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.classList.remove('active');
             });
+            
+            // Tambah class active ke menu yang diklik
             element.classList.add('active');
             
-            // Otomatis geser menu agar item yang diklik terlihat di tengah (opsional)
+            // Scroll otomatis ke tengah saat item diklik (untuk mobile)
             element.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
 
+        // Mencegah kehilangan data
         window.onbeforeunload = function() {
             return "Sistem mendeteksi aktivitas input. Pastikan data Anda sudah aman.";
         };
