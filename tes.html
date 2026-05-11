@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Administrasi Ujian - SDN Muara Bakti 01</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #064e3b;
+            --primary-dark: #022c22;
+            --accent: #10b981;
+            --bg-gray: #f1f5f9;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden; /* Mencegah double scrollbar */
+            background-color: var(--primary);
+        }
+
+        /* HEADER DASHBOARD */
+        .top-nav {
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2000;
+            position: relative;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            min-width: 300px;
+        }
+
+        .brand img { height: 45px; }
+        .brand h1 { font-size: 16px; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* MENU UTAMA */
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .nav-item {
+            padding: 10px 18px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 8px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+        }
+
+        /* CONTAINER IFRAME */
+        .main-container {
+            width: 100%;
+            height: calc(100vh - 70px);
+            background: var(--bg-gray);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media print {
+            .top-nav { display: none !important; }
+            .main-container { height: 100vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-nav">
+        <div class="brand">
+            <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
+            <div>
+                <h1>PANITIA PSAJ 2026</h1>
+                <small style="color: var(--accent); font-weight: bold; font-size: 10px;">SDN MUARA BAKTI 01</small>
+            </div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="javascript:void(0)" onclick="loadApp('app-album.html', this)" class="nav-item active">🖼️ Album & Denah</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-ljk.html', this)" class="nav-item">📝 LJK Merdeka</a>
+            <a href="javascript:void(0)" onclick="loadApp('app-monitoring.html', this)" class="nav-item">📋 Monitoring</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <iframe id="content-frame" src="app-album.html" allow="print"></iframe>
+    </div>
+
+    <script>
+        function loadApp(url, element) {
+            // Ganti Source Iframe
+            document.getElementById('content-frame').src = url;
+
+            // Update Class Active pada Menu
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        // Mencegah konfirmasi reload jika sedang input data
+        window.onbeforeunload = function() {
+            return "Pastikan data Anda sudah tersimpan sebelum keluar.";
+        };
+    </script>
+</body>
+</html>
