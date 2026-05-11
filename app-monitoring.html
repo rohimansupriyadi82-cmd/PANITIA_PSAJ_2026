@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrumen Monitoring PSAJ 2026 - Bekasi</title>
+    <style>
+        :root { 
+            --sidebar-width: 320px; 
+            --biru-utama: #0000FF; 
+            --biru-gelap: #00008B;
+            --orange-muda: #FFF4E6; 
+        }
+        * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+        body { margin: 0; display: flex; background-color: #f4f4f4; overflow-x: hidden; }
+
+        /* --- HAMBURGER MENU (MOBILE) --- */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 2000;
+            background: var(--biru-gelap);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* --- SIDEBAR NAVIGATION --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--biru-utama);
+            color: white;
+            padding: 0;
+            overflow-y: auto;
+            position: fixed;
+            left: 0; top: 0;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header { padding: 25px 20px; background: var(--biru-gelap); text-align: center; border-bottom: 3px solid rgba(255,255,255,0.2); }
+        .sidebar-header h2 { margin: 0; font-size: 18px; letter-spacing: 1px; font-weight: bold; }
+
+        details { border-bottom: 1px solid rgba(255,255,255,0.15); transition: background 0.3s; }
+        details[open] { background: rgba(0,0,0,0.15); padding-bottom: 10px; }
+        
+        summary { 
+            padding: 16px 20px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 13px; 
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+        }
+        summary:hover { background: var(--biru-gelap); }
+        summary::after { content: '▶'; font-size: 10px; transition: 0.3s; }
+        details[open] summary::after { transform: rotate(90deg); }
+
+        .menu-content { padding: 10px 20px; }
+        .menu-group { margin-bottom: 15px; }
+        .menu-group label { display: block; font-size: 11px; margin-bottom: 5px; color: #ced4da; text-transform: uppercase; font-weight: bold; }
+        .menu-group input, .menu-group textarea {
+            width: 100%; padding: 10px; border-radius: 5px; border: none;
+            background: #ffffff; color: #333; font-size: 12px;
+        }
+
+        .btn-print {
+            width: calc(100% - 40px); margin: 25px 20px 10px 20px; padding: 15px; 
+            background: #27ae60; color: white; border: none;
+            border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;
+        }
+
+        .sidebar-desc { padding: 0 20px 20px 20px; font-size: 11px; color: #ced4da; line-height: 1.5; text-align: center; }
+
+        /* --- DOCUMENT PREVIEW AREA --- */
+        #content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Container agar tabel di HP bisa di scroll horizontal tanpa merusak layout */
+        .document-wrapper {
+            max-width: 100%;
+            overflow-x: auto;
+            background: #ddd;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .f4-page {
+            width: 215mm; 
+            min-height: 330mm; 
+            background: white;
+            padding: 10mm 15mm; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+        }
+
+        /* --- KOP SURAT --- */
+        .kop-container { display: flex; align-items: center; border-bottom: 5px double black; padding-bottom: 8px; margin-bottom: 12px; }
+        .logo-daerah { width: 100px; height: auto; object-fit: contain; margin-right: 15px; }
+        .kop-text { text-align: center; flex-grow: 1; padding-right: 40px; }
+        .kop-text h1 { margin: 0; font-size: 24px; text-transform: uppercase; font-weight: 800; line-height: 1.1; }
+        .kop-text h2 { margin: -2px 0 2px 0; font-size: 38px; text-transform: uppercase; font-weight: 900; line-height: 1.0; }
+        .kop-text p { margin: 0; font-size: 13.5px; line-height: 1.2; }
+        .kop-text .web-p { font-size: 14.5px; margin-top: 2px; }
+
+        .judul-area { text-align: center; font-weight: bold; font-size: 12.5px; text-transform: uppercase; margin-bottom: 12px; }
+        
+        .info-sekolah-text { margin-bottom: 12px; font-size: 11.5px; line-height: 1.5; }
+        .info-row { display: flex; align-items: flex-start; }
+        .info-label { width: 170px; position: relative; }
+        .info-label::after { content: ":"; position: absolute; right: 10px; }
+        .info-value { flex: 1; font-weight: bold; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; border: 1.5px solid black; }
+        th, td { border: 1px solid #000000 !important; padding: 5px 3px; font-size: 10.5px; text-align: center; word-wrap: break-word; }
+        th { background-color: #ffffff; font-weight: bold; text-transform: uppercase; }
+        
+        /* WARNA ORANGE MUDA SELANG-SELING */
+        #instrumentBody tr:nth-child(even) { background-color: var(--orange-muda) !important; }
+        tr.header-sekat { background-color: #ffffff !important; font-weight: bold; }
+        .text-left { text-align: left !important; padding-left: 10px; }
+
+        .teknis-footer { font-size: 10.5px; line-height: 1.4; margin-top: 5px; border-top: 1px dashed #ccc; padding-top: 5px; }
+        .ttd-table { border: none !important; margin-top: 10px; width: 100%; }
+        .ttd-table td { border: none !important; width: 50%; text-align: center; font-size: 11.5px; vertical-align: top; padding: 0; line-height: 1.3; }
+
+        input[type="number"] { width: 100%; border: none; text-align: center; font-size: 10.5px; background: transparent; outline: none; font-weight: bold; }
+        input[type="radio"] { transform: scale(1.1); cursor: pointer; margin: 0; }
+
+        /* --- RESPONSIVE MOBILE SETTINGS --- */
+        @media (max-width: 768px) {
+            .mobile-toggle { display: block; }
+            #sidebar { transform: translateX(-100%); }
+            #sidebar.active { transform: translateX(0); }
+            #content { margin-left: 0; width: 100%; padding: 60px 10px 20px 10px; }
+            .f4-page { width: 215mm; } /* Tetap jaga lebar F4 agar tidak hancur, user bisa scroll */
+        }
+        
+        @media print {
+            @page { size: 215mm 330mm; margin: 0; }
+            body { background: white; }
+            #sidebar, .mobile-toggle { display: none; }
+            #content { margin-left: 0; width: 100%; padding: 0; }
+            .document-wrapper { padding: 0; background: transparent; }
+            .f4-page { box-shadow: none; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+<div id="sidebar">
+    <div class="sidebar-header">
+        <h2>INSTRUMEN MONITORING PSAJ</h2>
+    </div>
+
+    <details>
+        <summary>LOGO INSTANSI</summary>
+        <div class="menu-content">
+            <div class="menu-group">
+                <label>Ganti Logo (Opsional)</label>
+                <input type="file" id="inLogo" accept="image/*" onchange="loadLogo(event)">
+            </div>
+        </div>
+    </details>
+
+    <details>
+        <summary>PENGATURAN JUDUL</summary>
+        <div class="menu-content">
+            <div class="menu-group">
+                <label>Baris 1</label>
+                <input type="text" id="inJ1" value="INSTRUMEN MONITORING" oninput="updatePreview()">
+                <label>Baris 2</label>
+                <input type="text" id="inJ2" value="PENILAIAN SUMATIF AKHIR JENJANG (PSAJ)" oninput="updatePreview()">
+                <label>Baris 3</label>
+                <input type="text" id="inJ3" value="DAN KRITERIA KELULUSAN PENDIDIKAN JENJANG SEKOLAH DASAR" oninput="updatePreview()">
+                <label>Baris 4</label>
+                <input type="text" id="inJ4" value="TAHUN PELAJARAN 2025/2026" oninput="updatePreview()">
+            </div>
+        </div>
+    </details>
+
+    <details>
+        <summary>DATA DINAS PENDIDIKAN</summary>
+        <div class="menu-content">
+            <div class="menu-group">
+                <label>Nama Pemerintah</label>
+                <input type="text" id="inPemda" value="PEMERINTAH KABUPATEN BEKASI" oninput="updatePreview()">
+                <label>Nama Dinas</label>
+                <input type="text" id="inDinas" value="DINAS PENDIDIKAN" oninput="updatePreview()">
+                <label>Alamat Kantor</label>
+                <textarea id="inAlamatDinas" rows="3" oninput="updatePreview()">Kompleks Perkantoran Pemerintah Kabupaten Bekasi Gedung A2 Lantai 2&#13;Desa Sukamahi Kecamatan Cikarang Pusat, Kabupaten Bekasi, Jawa Barat 17530</textarea>
+                <label>Website</label>
+                <input type="text" id="inWeb" value="www.disdik.bekasikab.go.id" oninput="updatePreview()">
+            </div>
+        </div>
+    </details>
+
+    <details open>
+        <summary>PELAKSANAAN, TEMUAN & SARAN</summary>
+        <div class="menu-content">
+            <div class="menu-group">
+                <label>Waktu Pelaksanaan</label>
+                <input type="text" id="inWaktu" value="Senin - Rabu, 11 - 13 Mei 2026" oninput="updatePreview()">
+                <label>Alamat Sekolah</label>
+                <textarea id="inAlamatSekolah" rows="2" oninput="updatePreview()">Jl. Bayangkara Rt. 012/007 Ds. Muara Bakti Kec. Babelan - Bekasi</textarea>
+                <hr style="opacity: 0.2; margin: 10px 0;">
+                <label>Temuan-temuan</label>
+                <textarea id="inTemuan" rows="3" placeholder="Tulis temuan di sini..." oninput="updatePreview()"></textarea>
+                <label>Saran-saran</label>
+                <textarea id="inSaran" rows="3" placeholder="Tulis saran di sini..." oninput="updatePreview()"></textarea>
+            </div>
+        </div>
+    </details>
+
+    <details>
+        <summary>DATA SEKOLAH & PEJABAT</summary>
+        <div class="menu-content">
+            <div class="menu-group">
+                <label>Nama Sekolah</label>
+                <input type="text" id="inSekolah" value="SD NEGERI MUARA BAKTI 01" oninput="updatePreview()">
+                <label>Kepala Sekolah</label>
+                <input type="text" id="inKasek" value="ROHIMAH, S.Pd" oninput="updatePreview()">
+                <label>NIP Kepala Sekolah</label>
+                <input type="text" id="inNipKasek" value=".............................." oninput="updatePreview()">
+                <label>Pengawas Sekolah</label>
+                <input type="text" id="inPengawas" value=".............................." oninput="updatePreview()">
+                <label>NIP Pengawas</label>
+                <input type="text" id="inNipPengawas" value=".............................." oninput="updatePreview()">
+            </div>
+        </div>
+    </details>
+
+    <details>
+        <summary>LOKASI & TANGGAL</summary>
+        <div class="menu-content">
+            <div class="menu-group">
+                <label>Nama Kota</label>
+                <input type="text" id="inKota" value="Babelan" oninput="updatePreview()">
+                <label>Tanggal Monitoring</label>
+                <input type="text" id="inTanggal" value=".................. 2026" oninput="updatePreview()">
+            </div>
+        </div>
+    </details>
+
+    <button class="btn-print" onclick="window.print()">CETAK DOKUMEN (F4)</button>
+    
+    <div class="sidebar-desc">
+        Aplikasi ini dibuat untuk memudahkan dalam melakukan <b>MONITORING PSAJ</b> pada jenjang Sekolah Dasar.
+    </div>
+</div>
+
+<div id="content">
+    <div class="document-wrapper">
+        <div class="f4-page">
+            <div class="kop-container">
+                <img id="logoPreview" src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" class="logo-daerah">
+                <div class="kop-text">
+                    <h1 id="outPemda">PEMERINTAH KABUPATEN BEKASI</h1>
+                    <h2 id="outDinas">DINAS PENDIDIKAN</h2>
+                    <p id="outAlamatDinas">Kompleks Perkantoran Pemerintah Kabupaten Bekasi Gedung A2 Lantai 2<br>Desa Sukamahi, Kecamatan Cikarang Pusat, Kabupaten Bekasi, Jawa Barat 17530</p>
+                    <p class="web-p">Website: <span id="outWeb">www.disdik.bekasikab.go.id</span></p>
+                </div>
+            </div>
+
+            <div class="judul-area">
+                <span id="outJ1">INSTRUMEN MONITORING</span><br>
+                <span id="outJ2">PENILAIAN SUMATIF AKHIR JENJANG (PSAJ)</span><br>
+                <span id="outJ3">DAN KRITERIA KELULUSAN PENDIDIKAN JENJANG SEKOLAH DASAR</span><br>
+                <span id="outJ4">TAHUN PELAJARAN 2025/2026</span>
+            </div>
+
+            <div class="info-sekolah-text">
+                <div class="info-row"><div class="info-label">Nama Sekolah</div><div class="info-value"><span id="outSekolah">SD NEGERI ...</span></div></div>
+                <div class="info-row"><div class="info-label">Nama Kepala Sekolah</div><div class="info-value"><span id="outKasek">...</span></div></div>
+                <div class="info-row"><div class="info-label">Waktu Pelaksanaan</div><div class="info-value"><span id="outWaktu">.................. 2026</span></div></div>
+                <div class="info-row"><div class="info-label">Alamat Sekolah</div><div class="info-value"><span id="outAlamatSekolah">............................................................................................</span></div></div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" width="65">Jumlah Rombel</th>
+                        <th rowspan="2" width="65">Jumlah Ruangan</th>
+                        <th colspan="3">Peserta Terdaftar</th>
+                        <th colspan="3">Peserta Yang Hadir</th>
+                        <th colspan="3">Peserta Yang Tidak Hadir</th>
+                        <th rowspan="2">Catatan</th>
+                    </tr>
+                    <tr>
+                        <th width="25">L</th><th width="25">P</th><th width="30">Jml</th>
+                        <th width="25">L</th><th width="25">P</th><th width="30">Jml</th>
+                        <th width="25">L</th><th width="25">P</th><th width="30">Jml</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="number" id="inRombel" oninput="calcSum()"></td>
+                        <td><input type="number" id="inRuang" oninput="calcSum()"></td>
+                        <td><input type="number" id="rl" oninput="calcSum()"></td>
+                        <td><input type="number" id="rp" oninput="calcSum()"></td>
+                        <td id="rt" style="font-weight:bold;">0</td>
+                        <td><input type="number" id="hl" oninput="calcSum()"></td>
+                        <td><input type="number" id="hp" oninput="calcSum()"></td>
+                        <td id="ht" style="font-weight:bold;">0</td>
+                        <td><input type="number" id="tl" oninput="calcSum()"></td>
+                        <td><input type="number" id="tp" oninput="calcSum()"></td>
+                        <td id="tt" style="font-weight:bold;">0</td>
+                        <td><input type="text" style="width:100%; border:none; font-size:10px;"></td>
+                    </tr>
+                    <tr style="font-weight:bold;">
+                        <td id="fRombel">0</td><td id="fRuang">0</td>
+                        <td id="frl">0</td><td id="frp">0</td><td id="frt">0</td>
+                        <td id="fhl">0</td><td id="fhp">0</td><td id="fht">0</td>
+                        <td id="ftl">0</td><td id="ftp">0</td><td id="ftt">0</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" width="30">No</th>
+                        <th rowspan="2">Komponen Monitoring</th>
+                        <th colspan="2" width="45">Jwb</th>
+                        <th colspan="5" width="115">Skor Nilai</th>
+                        <th rowspan="2" width="85">Keterangan</th>
+                    </tr>
+                    <tr>
+                        <th width="22">Y</th><th width="22">T</th>
+                        <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+                    </tr>
+                </thead>
+                <tbody id="instrumentBody">
+                    <tr class="header-sekat"><td class="text-left" colspan="10">A. Persiapan Ujian</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr style="font-weight:bold;">
+                        <td colspan="4">Total Skor Perolehan</td>
+                        <td colspan="5" id="totalSkor">0</td>
+                        <td style="border-left: 1px solid black !important;"></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="teknis-footer">
+                1. Nilai Rata-rata : <span style="text-decoration: underline;">Jumlah Seluruh Skor x 100</span> = <span id="rataRata" style="font-weight:bold; background: #ffffcc; padding: 2px 8px; border: 1px solid #ccc;">0</span> (Skor Maksimal: 85)<br>
+                2. Temuan-temuan : <span id="outTemuan">............................................................................................................................................................<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;............................................................................................................................................................................</span><br>
+                3. Saran-saran : <span id="outSaran">................................................................................................................................................................</span>
+            </div>
+
+            <table class="ttd-table">
+                <tr><td></td><td><span id="outKotaPrint">Bekasi</span>, <span id="outTglPrint">.................. 2026</span></td></tr>
+                <tr><td>Kepala Sekolah,</td><td>Pengawas Sekolah,</td></tr>
+                <tr style="height: 35px;"><td></td><td></td></tr>
+                <tr><td><b><span id="outKasekPrint" style="text-decoration:underline; text-transform:uppercase;">..............................</span></b></td><td><b><span id="outPengawasPrint" style="text-decoration:underline; text-transform:uppercase;">..............................</span></b></td></tr>
+                <tr><td>NIP. <span id="outNipKasekPrint">..............................</span></td><td>NIP. <span id="outNipPengawasPrint">..............................</span></td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    const komponen = [
+        {id: 1, text: "Ketersediaan Dokumen POS PSAJ"}, {id: 2, text: "SK Panitia Pelaksana PSAJ"}, {id: 3, text: "Jadwal Pelaksanaan PSAJ"},
+        {id: 4, text: "Tata Tertib Peserta & Pengawas"}, {id: 5, text: "Kesiapan Naskah Soal PSAJ"},
+        {id: 1, text: "Daftar Hadir Peserta & Pengawas"}, {id: 2, text: "Denah Lokasi & Ruang Ujian"},
+        {id: 3, text: "Denah Tempat Duduk Peserta"}, {id: 4, text: "SK Pengawas Ruang PSAJ"},
+        {id: 5, text: "Berita Acara Pelaksanaan PSAJ"}, {id: 6, text: "Kunci Jawaban & Rubrik Penilaian"},
+        {id: 7, text: "Kualitas Kejelasan Cetakan Soal"}, {id: 8, text: "Kecukupan Jumlah Naskah Soal"},
+        {id: 9, text: "Keamanan & Kerahasiaan Naskah"}, {id: 10, text: "Kebersihan & Kenyamanan Ruang"},
+        {id: 11, text: "Ketertiban Lingkungan Sekolah"}, {id: 12, text: "Sistem Pengolahan Nilai Hasil PSAJ"}
+    ];
+
+    function initForm() {
+        const body = document.getElementById('instrumentBody');
+        let html = '';
+        komponen.forEach((item, index) => {
+            if(index === 5) html += `<tr class="header-sekat"><td class="text-left" colspan="10">B. Pelaksanaan Ujian</td></tr>`;
+            html += `<tr>
+                <td>${item.id}</td>
+                <td class="text-left">${item.text}</td>
+                <td><input type="radio" name="j${index}"></td>
+                <td><input type="radio" name="j${index}"></td>
+                <td><input type="radio" name="n${index}" value="5" onclick="calcScore()"></td>
+                <td><input type="radio" name="n${index}" value="4" onclick="calcScore()"></td>
+                <td><input type="radio" name="n${index}" value="3" onclick="calcScore()"></td>
+                <td><input type="radio" name="n${index}" value="2" onclick="calcScore()"></td>
+                <td><input type="radio" name="n${index}" value="1" onclick="calcScore()"></td>
+                ${index === 0 ? `<td rowspan="17" style="vertical-align:top; text-align:center; font-size:9px; padding:10px 5px; border:1px solid black !important; background: white !important; line-height:1.4; border-bottom: none !important;">
+                    <b>Skor :</b><br>A = 5<br>B = 4<br>C = 3<br>D = 2<br>E = 1<br><br>
+                    <b>Nilai :</b><br>A = 86 – 100<br>B = 71 – 85<br>C = 56 – 70<br>D = 41 – 55<br>E = 1 – 40
+                </td>` : ''}
+            </tr>`;
+        });
+        body.innerHTML += html;
+        updatePreview();
+    }
+
+    function loadLogo(event) {
+        if(event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(){ document.getElementById('logoPreview').src = reader.result; };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+
+    function updatePreview() {
+        const fields = ['J1','J2','J3','J4','Pemda','Dinas','Web','Sekolah','Kasek','NipKasek','Pengawas','NipPengawas','Kota','Tanggal','Waktu','AlamatSekolah','Temuan','Saran'];
+        fields.forEach(f => {
+            const el = document.getElementById('out' + f);
+            const input = document.getElementById('in' + f);
+            if(el && input) {
+                if(['Temuan', 'Saran', 'AlamatSekolah'].includes(f)) {
+                   el.innerHTML = input.value.replace(/\n/g, '<br>') || "..................................................";
+                } else {
+                   el.innerText = input.value;
+                }
+            }
+        });
+        document.getElementById('outAlamatDinas').innerHTML = document.getElementById('inAlamatDinas').value.replace(/\n/g, '<br>');
+        document.getElementById('outKotaPrint').innerText = document.getElementById('inKota').value;
+        document.getElementById('outTglPrint').innerText = document.getElementById('inTanggal').value;
+        document.getElementById('outKasekPrint').innerText = document.getElementById('inKasek').value;
+        document.getElementById('outNipKasekPrint').innerText = document.getElementById('inNipKasek').value;
+        document.getElementById('outPengawasPrint').innerText = document.getElementById('inPengawas').value;
+        document.getElementById('outNipPengawasPrint').innerText = document.getElementById('inNipPengawas').value;
+    }
+
+    function calcSum() {
+        const rombel = parseInt(document.getElementById('inRombel').value || 0);
+        const ruang = parseInt(document.getElementById('inRuang').value || 0);
+        const rl = parseInt(document.getElementById('rl').value || 0);
+        const rp = parseInt(document.getElementById('rp').value || 0);
+        const hl = parseInt(document.getElementById('hl').value || 0);
+        const hp = parseInt(document.getElementById('hp').value || 0);
+        const tl = parseInt(document.getElementById('tl').value || 0);
+        const tp = parseInt(document.getElementById('tp').value || 0);
+
+        const rt = rl + rp; const ht = hl + hp; const tt = tl + tp;
+        document.getElementById('rt').innerText = rt; document.getElementById('ht').innerText = ht; document.getElementById('tt').innerText = tt;
+        document.getElementById('fRombel').innerText = rombel; document.getElementById('fRuang').innerText = ruang;
+        document.getElementById('frl').innerText = rl; document.getElementById('frp').innerText = rp; document.getElementById('frt').innerText = rt;
+        document.getElementById('fhl').innerText = hl; document.getElementById('fhp').innerText = hp; document.getElementById('fht').innerText = ht;
+        document.getElementById('ftl').innerText = tl; document.getElementById('ftp').innerText = tp; document.getElementById('ftt').innerText = tt;
+    }
+
+    function calcScore() {
+        let total = 0;
+        for (let i = 0; i < 17; i++) {
+            const sel = document.querySelector(`input[name="n${i}"]:checked`);
+            if(sel) total += parseInt(sel.value);
+        }
+        document.getElementById('totalSkor').innerText = total;
+        document.getElementById('rataRata').innerText = ((total / 85) * 100).toFixed(2);
+    }
+    window.onload = initForm;
+</script>
+</body>
+</html>

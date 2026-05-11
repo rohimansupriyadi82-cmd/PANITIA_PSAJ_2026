@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LJK Kurikulum Merdeka - Sekolah</title>
+    <style>
+        /* CSS Reset & A4 Calibration */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --ljk-blue: #3B82F6; 
+            --ljk-line: 1pt; 
+            --ljk-line-bold: 1.5pt;
+        }
+
+        body {
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10mm 0 10mm 300px; 
+        }
+
+        /* --- DASHBOARD EDITOR --- */
+        .dashboard {
+            width: 300px; 
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            
+            /* --- PERBAIKAN BACKGROUND DASHBOARD DI SINI --- */
+            background-color: rgba(255, 255, 255, 0.85);
+            background-image: url('background.png'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: lighten;
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px);
+            padding: 25px;
+            border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard:hover {
+            transform: translateY(-2px); 
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .dashboard .logo {
+            max-width: 80px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .dashboard h3 { 
+            font-size: 15px; 
+            color: #1e293b; 
+            text-align: center;
+            margin-bottom: 5px;
+            position: relative;
+            padding-bottom: 12px;
+            text-shadow: 0px 1px 2px white;
+        }
+
+        .dashboard h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: var(--ljk-blue);
+            border-radius: 3px;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 6px; }
+        .input-group label { 
+            font-size: 11.5px; 
+            font-weight: 600; 
+            color: #1e293b; 
+            letter-spacing: 0.3px;
+            text-shadow: 0px 1px 1px white;
+        }
+        
+        .input-group input, .input-group select { 
+            padding: 10px 12px; 
+            border: 1px solid #cbd5e1; 
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px; 
+            font-size: 13px; 
+            color: #334155;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--ljk-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); 
+        }
+
+        .btn-print {
+            padding: 14px;
+            background: linear-gradient(135deg, var(--ljk-blue), #2563EB); 
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-print:hover { 
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-print:active { transform: translateY(0); }
+
+        .created-by {
+            text-align: center;
+            font-size: 11px;
+            color: #475569;
+            font-weight: bold;
+            margin-top: 2px;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+            letter-spacing: 0.3px;
+        }
+
+        /* --- HALAMAN LJK --- */
+        .page {
+            width: 210mm;
+            height: 297mm;
+            background: white;
+            padding: 10mm; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            position: relative;
+            color: var(--ljk-blue);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+            margin-bottom: 10mm;
+        }
+
+        /* --- RESPONSIVE UNTUK HP --- */
+        @media screen and (max-width: 850px) {
+            body {
+                padding: 15px; 
+                align-items: center;
+                overflow-x: auto; 
+            }
+            .dashboard {
+                position: relative; 
+                left: 0;
+                top: 0;
+                width: 100%;
+                max-width: 350px;
+                margin-bottom: 20px;
+                z-index: 10;
+            }
+            .page {
+                margin-left: 0;
+            }
+        }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: white; padding: 0; margin: 0; } 
+            .page { 
+                box-shadow: none; 
+                margin: 0; 
+                width: 210mm; 
+                height: 296.5mm; 
+                padding: 10mm; 
+            }
+            .btn-print, .dashboard, .walking-student { display: none !important; }
+        }
+
+        /* --- PERBAIKAN ANIMASI MURID SD --- */
+        .walking-student {
+            position: fixed;
+            bottom: 10px;
+            right: -150px; 
+            width: 100px;  
+            height: auto;
+            z-index: 9999;
+            pointer-events: none; 
+            /* Menambahkan scaleX(-1) untuk membalik wajah agar menghadap ke kiri */
+            transform: scaleX(-1); 
+            animation: moveLeft 15s linear infinite;
+        }
+
+        @keyframes moveLeft {
+            0% { right: -150px; }
+            100% { right: 100%; }
+        }
+
+        .border-main {
+            border: var(--ljk-line-bold) solid var(--ljk-blue);
+            flex-grow: 1; 
+            padding: 3mm; 
+            display: flex;
+            flex-direction: column;
+            gap: 2.5mm; 
+            box-sizing: border-box;
+        }
+
+        .header-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 3mm;
+        }
+
+        .box-outline {
+            border: var(--ljk-line) solid var(--ljk-blue);
+            padding: 2mm;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header-title {
+            text-align: center;
+            line-height: 1.3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1pt solid var(--ljk-blue);
+            padding-bottom: 2mm;
+            margin-bottom: 2mm;
+        }
+        .header-title p#out-judul { 
+            font-size: 11pt; 
+            font-weight: 900; 
+            margin: 0; 
+        }
+        .header-title p#out-jenis {
+            font-size: 9pt; 
+            font-weight: bold;
+            margin-top: 1.5mm;
+            color: #000;
+        }
+        .header-title h2 { 
+            font-size: 15pt; 
+            margin: 1.5mm 0; 
+            color: #000; 
+            text-transform: uppercase; 
+            font-family: "Arial Black", Gadget, sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .header-title p#out-sub { font-size: 9pt; font-weight: bold; }
+
+        .example-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 7.5pt; 
+        }
+        .example-grid {
+            display: grid;
+            grid-template-columns: auto auto; 
+            gap: 2mm 6mm;
+            margin-top: 1.5mm;
+        }
+        .ex-item { 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+            gap: 2mm; 
+            font-weight: bold; 
+            color: #000; 
+        }
+        .ex-letters {
+            display: flex;
+            gap: 1mm;
+        }
+        .box-sample {
+            width: 4.5mm;
+            height: 4.5mm;
+            border: 0.8pt solid var(--ljk-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6.8pt; 
+            font-weight: bold;
+            position: relative;
+            background: #fff;
+            color: var(--ljk-blue);
+            line-height: 1; 
+        }
+
+        .mark-hitam { background: #000; border-color: #000; color: #000; }
+        
+        .mark-lingkaran { color: #000; }
+        .mark-lingkaran::after {
+            content: '';
+            position: absolute;
+            width: 6mm;
+            height: 6mm;
+            border: 1pt solid #000;
+            border-radius: 50%;
+        }
+
+        .mark-silang { color: #000; }
+        .mark-silang::before, .mark-silang::after {
+            content: '';
+            position: absolute;
+            background-color: #000;
+            width: 130%;
+            height: 1pt;
+        }
+        .mark-silang::before { transform: rotate(45deg); }
+        .mark-silang::after { transform: rotate(-45deg); }
+
+        .mark-centang { color: #000; }
+        .mark-centang::after {
+            content: '\2714';
+            position: absolute;
+            font-size: 12pt;
+            color: #000;
+            top: 50%;
+            left: 50%;
+            transform: translate(-30%, -60%);
+        }
+
+        .instruction-box {
+            font-size: 7.5pt; 
+            line-height: 1.4;
+            justify-content: flex-start;
+        }
+        .instruction-box ol { padding-left: 4mm; margin-top: 1mm; }
+        .instruction-box li { margin-bottom: 0.5mm; color: #000; }
+
+        .middle-section {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 3mm;
+        }
+
+        .section-label {
+            background: var(--ljk-blue);
+            color: white;
+            text-align: center;
+            font-size: 8.5pt;
+            font-weight: bold;
+            padding: 1.5mm 0;
+            margin-bottom: 2mm;
+            letter-spacing: 0.5px;
+        }
+
+        .omr-grid { display: flex; gap: 0.6mm; justify-content: center; }
+        .omr-col { display: flex; flex-direction: column; gap: 0.5mm; align-items: center; }
+        
+        .omr-box-input {
+            width: 4mm;
+            height: 5mm;
+            border: 0.8pt solid var(--ljk-blue);
+            margin-bottom: 1mm;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 7.5pt; 
+            font-weight: bold;
+            background: #fff;
+            color: #000;
+            line-height: 1;
+        }
+        
+        .omr-circle {
+            width: 4mm;
+            height: 4mm;
+            border: 0.6pt solid var(--ljk-blue);
+            font-size: 6.5pt; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #000;
+            background: #fff;
+            line-height: 1; 
+        }
+
+        .tgl-header-label { 
+            font-size: 7.5pt; 
+            font-weight: bold; 
+            text-align: center; 
+            border-bottom: 0.8pt solid var(--ljk-blue); 
+            width: 100%; 
+            margin-bottom: 1mm;
+            padding-bottom: 0.5mm;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5mm 3mm;
+            font-size: 8pt;
+            padding: 1mm;
+        }
+        .subject-item { display: flex; align-items: center; gap: 2mm; font-weight: bold; color: #000;}
+        .sub-circle { 
+            width: 4.2mm; 
+            height: 4.2mm; 
+            border: 0.8pt solid var(--ljk-blue); 
+            flex-shrink: 0; 
+            background: #fff; 
+        }
+
+        .answer-container {
+            border: var(--ljk-line) solid var(--ljk-blue);
+            flex-grow: 1;
+            padding-bottom: 2mm;
+            background: rgba(255, 255, 255, 0.7);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+        }
+        .answer-grid {
+            display: flex;
+            justify-content: center; 
+            gap: 5mm; 
+            padding: 3mm 4mm;
+            flex-grow: 1;
+        }
+        .answer-col { display: flex; flex-direction: column; justify-content: space-between;}
+        .q-row { display: flex; align-items: center; gap: 2mm; font-size: 8.5pt; }
+        
+        .q-num { width: 5.5mm; text-align: right; font-weight: bold; color: #000; padding-right: 1mm;} 
+        .q-options { display: flex; gap: 1.5mm; }
+        
+        .q-opt-circle {
+            width: 4.8mm;
+            height: 4.8mm;
+            border: 0.8pt solid var(--ljk-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 7pt; 
+            font-weight: bold;
+            color: #000;
+            background: #fff;
+            line-height: 1;
+        }
+
+        .essay-item { margin-bottom: 3mm; }
+        .essay-num { font-weight: bold; font-size: 10pt; margin-bottom: 1mm; display: block; color: #000;}
+        .essay-box {
+            width: 100%;
+            height: 35mm;
+            border: 1pt solid var(--ljk-blue);
+            background-image: repeating-linear-gradient(white, white 6.5mm, #eee 6.5mm, #eee 7mm);
+            padding: 2mm;
+        }
+
+        .reg-marks {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto; 
+            margin-bottom: 2mm; 
+            padding: 0 4mm; 
+        }
+        .mark-black { width: 15mm; height: 4mm; background: #000; }
+        .side-mark {
+            position: absolute;
+            left: 0;
+            width: 6mm;
+            height: 3mm;
+            background: #000;
+        }
+
+        .signature-area {
+            height: 22mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2mm;
+            font-size: 8.5pt;
+            border: 0.8pt solid var(--ljk-blue);
+            background: #fff;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .info-small { font-size: 8pt; line-height: 1.6; color: #000; font-weight: bold;}
+    </style>
+</head>
+<body>
+
+    <!-- Animasi murid_SD.gif berjalan maju (menghadap kiri) dari kanan ke kiri -->
+    <img src="murid_SD.gif" alt="Murid SD" class="walking-student">
+
+    <div class="dashboard">
+        <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo Kab Bekasi" class="logo">
+        <h3>PENGATURAN TAMPILAN LJK</h3>
+        <div class="input-group">
+            <label>Nama Sekolah:</label>
+            <input type="text" id="in-sekolah" value="SDN MUARA BAKTI 01" oninput="sync()">
+        </div>
+        <div class="input-group">
+            <label>Judul LJK (Baris 1):</label>
+            <input type="text" id="in-judul" value="LEMBAR JAWABAN KOMPUTER" oninput="sync()">
+        </div>
+        <div class="input-group">
+            <label>Jenis Ujian (Baris 2):</label>
+            <input type="text" id="in-jenis" value="UJIAN SEKOLAH (US)" oninput="sync()">
+        </div>
+        <div class="input-group">
+            <label>Sub-Judul / Kurikulum:</label>
+            <input type="text" id="in-sub" value="TAHUN PELAJARAN 2025/2026" oninput="sync()">
+        </div>
+        <div class="input-group">
+            <label>Jumlah Pilihan Ganda:</label>
+            <select id="in-jumlah" onchange="generateAnswers()">
+                <option value="20">20 Nomor</option>
+                <option value="30">30 Nomor</option>
+                <option value="40">40 Nomor</option>
+                <option value="50" selected>50 Nomor</option>
+            </select>
+        </div>
+        <button class="btn-print" onclick="window.print()">CETAK LJK SEKARANG</button>
+        <p class="created-by">Created By. Rohiman Supriyadi</p>
+    </div>
+
+    <div class="page">
+        <div class="side-mark" style="top: 80mm;"></div>
+        <div class="side-mark" style="top: 140mm;"></div>
+        <div class="side-mark" style="top: 200mm;"></div>
+        <div class="side-mark" style="top: 260mm;"></div>
+
+        <div class="border-main">
+            <div class="header-section">
+                <div class="box-outline">
+                    <div class="header-title">
+                        <p id="out-judul">LEMBAR JAWABAN KOMPUTER</p>
+                        <p id="out-jenis">UJIAN SEKOLAH (US)</p>
+                        <h2 id="out-sekolah">............</h2>
+                        <p id="out-sub">TAHUN PELAJARAN 2025/2026</p>
+                    </div>
+                    
+                    <div class="example-box">
+                        <strong style="margin-bottom: 2mm; color: #000; text-decoration: underline;">Contoh Memberi Jawaban:</strong>
+                        
+                        <div class="example-grid">
+                            <div class="ex-item">
+                                <div class="ex-letters">
+                                    <div class="box-sample">A</div>
+                                    <div class="box-sample">B</div>
+                                    <div class="box-sample">C</div>
+                                    <div class="box-sample mark-hitam">D</div>
+                                </div>
+                                <span>SALAH</span>
+                            </div>
+                            
+                            <div class="ex-item">
+                                <div class="ex-letters">
+                                    <div class="box-sample mark-lingkaran">A</div>
+                                    <div class="box-sample">B</div>
+                                    <div class="box-sample">C</div>
+                                    <div class="box-sample">D</div>
+                                </div>
+                                <span>SALAH</span>
+                            </div>
+
+                            <div class="ex-item">
+                                <div class="ex-letters">
+                                    <div class="box-sample">A</div>
+                                    <div class="box-sample mark-silang">B</div>
+                                    <div class="box-sample">C</div>
+                                    <div class="box-sample">D</div>
+                                </div>
+                                <span>BENAR</span>
+                            </div>
+
+                            <div class="ex-item">
+                                <div class="ex-letters">
+                                    <div class="box-sample">A</div>
+                                    <div class="box-sample">B</div>
+                                    <div class="box-sample mark-centang">C</div>
+                                    <div class="box-sample">D</div>
+                                </div>
+                                <span>SALAH</span>
+                            </div>
+                        </div>
+                        </div>
+                </div>
+
+                <div class="box-outline instruction-box">
+                    <strong style="text-decoration: underline; margin-bottom: 1mm; color: #000;">PETUNJUK PENGISIAN:</strong>
+                    <ol>
+                        <li>Arsirlah/Hitamkan kotak hanya menggunakan <b>Pensil 2B</b>.</li>
+                        <li>Lembar jawaban tidak boleh kotor, basah, atau robek.</li>
+                        <li>Hitamkan kotak dengan penuh pada pilihan jawaban.</li>
+                        <li>Tulislah Nama Peserta & arsir kotak di bawahnya.</li>
+                        <li>Isilah Nomor Peserta & Tanggal Lahir dengan teliti.</li>
+                        <li>Arsirlah kotak pada kolom Mata Pelajaran yang diujikan.</li>
+                        <li>Jika salah, hapus sebersih mungkin lalu ganti jawaban.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="middle-section">
+                <div class="box-outline">
+                    <div class="section-label">NAMA PESERTA (HURUF KAPITAL)</div>
+                    <div class="omr-grid" id="name-grid"></div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 3mm;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3mm;">
+                        <div class="box-outline">
+                            <div class="section-label">NOMOR PESERTA</div>
+                            <div class="omr-grid" id="no-peserta-grid"></div>
+                        </div>
+
+                        <div class="box-outline">
+                            <div class="section-label">TANGGAL LAHIR</div>
+                            <div style="display: flex; justify-content: center; gap: 1.5mm;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <div class="tgl-header-label">Tgl</div>
+                                    <div class="omr-grid" id="tgl-custom"></div>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <div class="tgl-header-label">Bln</div>
+                                    <div class="omr-grid" id="bln-custom"></div>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <div class="tgl-header-label">Thn</div>
+                                    <div class="omr-grid" id="thn-custom"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-outline" style="flex-grow: 1;">
+                        <div class="section-label">MATA PELAJARAN</div>
+                        <div class="subject-grid">
+                            <div class="subject-item"><div class="sub-circle"></div> Pend. Agama & BP</div>
+                            <div class="subject-item"><div class="sub-circle"></div> Pend. Pancasila</div>
+                            <div class="subject-item"><div class="sub-circle"></div> Bahasa Indonesia</div>
+                            <div class="subject-item"><div class="sub-circle"></div> Matematika</div>
+                            <div class="subject-item"><div class="sub-circle"></div> IPAS</div>
+                            <div class="subject-item"><div class="sub-circle"></div> Seni & Budaya</div>
+                            <div class="subject-item"><div class="sub-circle"></div> Bahasa Inggris</div>
+                            <div class="subject-item"><div class="sub-circle"></div> Bahasa Sunda</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3mm;">
+                        <div class="info-small">
+                            Nama Sekolah:<br>
+                            <strong class="out-sekolah-sync">............</strong><br><br>
+                            Tanggal Ujian:<br>
+                            <span style="letter-spacing: 2px; white-space: nowrap;">....... / ............... / 202...</span>
+                        </div>
+                        <div class="signature-area">
+                            <span>Tanda Tangan Peserta</span>
+                            <div style="width: 90%; border-bottom: 0.8pt dashed var(--ljk-blue); margin-bottom: 1mm;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="answer-container">
+                <div class="section-label" style="margin-bottom: 0;">PILIHAN JAWABAN (HITAMKAN KOTAK DENGAN PENUH)</div>
+                <div class="answer-grid" id="answer-grid"></div>
+            </div>
+
+            <div class="reg-marks">
+                <div class="mark-black"></div>
+                <div style="text-align: center; font-size: 7.5pt; font-weight: bold; color: #000; padding: 0 4mm;">
+                    FORM-LJK-UJIAN-2026-A4-KM-PG
+                </div>
+                <div class="mark-black"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page">
+        <div class="side-mark" style="top: 80mm;"></div>
+        <div class="side-mark" style="top: 200mm;"></div>
+        
+        <div class="border-main">
+            <div class="header-section" style="grid-template-columns: 1fr;">
+                <div class="box-outline" style="border: none; background: transparent;">
+                    <div class="header-title" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
+                        <p class="out-judul-sync" style="font-size: 11pt; font-weight: 900;">LEMBAR JAWABAN KOMPUTER</p>
+                        <p class="out-jenis-sync" style="font-size: 9pt; font-weight: bold; margin-top: 1.5mm; color: #000;">UJIAN SEKOLAH (US)</p>
+                        <h2 class="out-sekolah-sync" style="font-size: 15pt; margin: 1.5mm 0; color: #000; text-transform: uppercase; font-family: 'Arial Black', sans-serif;">............</h2>
+                        <p class="out-sub-sync" style="font-size: 10pt; font-weight: bold; letter-spacing: 0.5px;">LEMBAR JAWABAN URAIAN / ESSAY</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="answer-container" style="padding: 5mm;">
+                <div class="section-label">JAWABAN PERTANYAAN URAIAN</div>
+                
+                <div class="essay-item">
+                    <span class="essay-num">1.</span>
+                    <div class="essay-box"></div>
+                </div>
+                <div class="essay-item">
+                    <span class="essay-num">2.</span>
+                    <div class="essay-box"></div>
+                </div>
+                <div class="essay-item">
+                    <span class="essay-num">3.</span>
+                    <div class="essay-box"></div>
+                </div>
+                <div class="essay-item">
+                    <span class="essay-num">4.</span>
+                    <div class="essay-box"></div>
+                </div>
+                <div class="essay-item">
+                    <span class="essay-num">5.</span>
+                    <div class="essay-box"></div>
+                </div>
+            </div>
+
+            <div class="reg-marks">
+                <div class="mark-black"></div>
+                <div style="text-align: center; font-size: 7.5pt; font-weight: bold; color: #000; padding: 0 4mm;">
+                    FORM-LJK-UJIAN-2026-A4-KM-ESSAY
+                </div>
+                <div class="mark-black"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sync() {
+            const sch = document.getElementById('in-sekolah').value;
+            const judul = document.getElementById('in-judul').value;
+            const jenis = document.getElementById('in-jenis').value;
+            const sub = document.getElementById('in-sub').value;
+
+            document.getElementById('out-sekolah').innerText = sch;
+            document.getElementById('out-judul').innerText = judul;
+            document.getElementById('out-jenis').innerText = jenis;
+            document.getElementById('out-sub').innerText = sub;
+            
+            const schElements = document.querySelectorAll('.out-sekolah-sync');
+            schElements.forEach(el => el.innerText = sch);
+
+            const judulElements = document.querySelectorAll('.out-judul-sync');
+            judulElements.forEach(el => el.innerText = judul);
+
+            const jenisElements = document.querySelectorAll('.out-jenis-sync');
+            jenisElements.forEach(el => el.innerText = jenis);
+            
+            const subElements = document.querySelectorAll('.out-sub-sync');
+            subElements.forEach(el => {
+                if(el.innerText.includes("ESSAY") || el.innerText.includes("URAIAN")) {
+                    el.innerText = sub + " - LEMBAR URAIAN/ESSAY";
+                }
+            });
+        }
+
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        
+        function createCol(rows) {
+            const col = document.createElement('div');
+            col.className = 'omr-col';
+            col.innerHTML = '<div class="omr-box-input"></div>';
+            rows.forEach(val => {
+                col.innerHTML += `<div class="omr-circle">${val}</div>`;
+            });
+            return col;
+        }
+
+        function createStandardGrid(containerId, cols, rowCount, type) {
+            const container = document.getElementById(containerId);
+            for (let i = 0; i < cols; i++) {
+                let rows = [];
+                for(let j=0; j<rowCount; j++) rows.push(type === 'alpha' ? alphabet[j] : j);
+                container.appendChild(createCol(rows));
+            }
+        }
+
+        function generateAnswers() {
+            const answerGrid = document.getElementById('answer-grid');
+            answerGrid.innerHTML = ''; 
+            
+            const jumlahSoal = parseInt(document.getElementById('in-jumlah').value);
+            const totalKolom = jumlahSoal / 10;
+            const opts = ['A', 'B', 'C', 'D'];
+            
+            for (let c = 0; c < totalKolom; c++) {
+                const col = document.createElement('div');
+                col.className = 'answer-col';
+                for (let i = 1; i <= 10; i++) {
+                    const qNum = (c * 10) + i;
+                    let html = `<div class="q-row"><div class="q-num">${qNum}.</div><div class="q-options">`;
+                    opts.forEach(o => html += `<div class="q-opt-circle">${o}</div>`);
+                    html += `</div></div>`;
+                    col.innerHTML += html;
+                }
+                answerGrid.appendChild(col);
+            }
+        }
+
+        createStandardGrid('name-grid', 18, 26, 'alpha');
+        createStandardGrid('no-peserta-grid', 10, 10, 'num');
+
+        const tglContainer = document.getElementById('tgl-custom');
+        tglContainer.appendChild(createCol([0,1,2,3])); 
+        tglContainer.appendChild(createCol([0,1,2,3,4,5,6,7,8,9])); 
+
+        const blnContainer = document.getElementById('bln-custom');
+        blnContainer.appendChild(createCol([0,1])); 
+        blnContainer.appendChild(createCol([0,1,2,3,4,5,6,7,8,9])); 
+
+        const thnContainer = document.getElementById('thn-custom');
+        thnContainer.appendChild(createCol([0,1,2,3,4,5,6,7,8,9])); 
+        thnContainer.appendChild(createCol([0,1,2,3,4,5,6,7,8,9])); 
+
+        window.onload = function() {
+            sync();
+            generateAnswers(); 
+        };
+    </script>
+</body>
+</html>
