@@ -81,7 +81,20 @@
             border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;
         }
 
+        /* Tombol Reset Data */
+        .btn-reset {
+            width: calc(100% - 40px); margin: 0 20px 25px 20px; padding: 10px; 
+            background: #e74c3c; color: white; border: none;
+            border-radius: 6px; cursor: pointer; font-size: 12px;
+        }
+
         .sidebar-desc { padding: 0 20px 20px 20px; font-size: 11px; color: #ced4da; line-height: 1.5; text-align: center; }
+
+        /* Style khusus untuk teks panduan di sidebar */
+        .guide-text { font-size: 11.5px; color: #ffffff; line-height: 1.5; padding: 5px 0; }
+        .guide-text b { color: #f1c40f; }
+        .guide-list { margin: 0; padding-left: 15px; }
+        .guide-list li { margin-bottom: 8px; }
 
         /* --- DOCUMENT PREVIEW AREA --- */
         #content {
@@ -93,7 +106,6 @@
             transition: margin-left 0.3s ease;
         }
         
-        /* Container agar tabel di HP bisa di scroll horizontal tanpa merusak layout */
         .document-wrapper {
             max-width: 100%;
             overflow-x: auto;
@@ -134,7 +146,6 @@
         th, td { border: 1px solid #000000 !important; padding: 5px 3px; font-size: 10.5px; text-align: center; word-wrap: break-word; }
         th { background-color: #ffffff; font-weight: bold; text-transform: uppercase; }
         
-        /* WARNA ORANGE MUDA SELANG-SELING */
         #instrumentBody tr:nth-child(even) { background-color: var(--orange-muda) !important; }
         tr.header-sekat { background-color: #ffffff !important; font-weight: bold; }
         .text-left { text-align: left !important; padding-left: 10px; }
@@ -152,7 +163,7 @@
             #sidebar { transform: translateX(-100%); }
             #sidebar.active { transform: translateX(0); }
             #content { margin-left: 0; width: 100%; padding: 60px 10px 20px 10px; }
-            .f4-page { width: 215mm; } /* Tetap jaga lebar F4 agar tidak hancur, user bisa scroll */
+            .f4-page { width: 215mm; } 
         }
         
         @media print {
@@ -173,6 +184,42 @@
     <div class="sidebar-header">
         <h2>INSTRUMEN MONITORING PSAJ</h2>
     </div>
+
+    <!-- PANDUAN PENGISIAN -->
+    <details>
+        <summary style="background: #2c3e50;">PANDUAN PENGGUNAAN</summary>
+        <div class="menu-content guide-text">
+            <ul class="guide-list">
+                <li><b>Input Data:</b> Isi semua form pada menu di sidebar ini. Teks pada dokumen akan berubah secara otomatis (Real-time).</li>
+                <li><b>Tabel Peserta:</b> Masukkan angka pada kolom L (Laki-laki) dan P (Perempuan). Kolom "Jml" akan otomatis menjumlahkan secara otomatis.</li>
+                <li><b>Penilaian Instrumen:</b> Pilih jawaban <b>Y/T</b> dan berikan skor <b>A sampai E</b> pada setiap poin monitoring.</li>
+                <li><b>Penyimpanan:</b> Data Anda tersimpan secara otomatis di memori browser (Local Storage). Anda bisa menutup browser dan data tetap ada saat dibuka kembali.</li>
+                <li><b>Cetak:</b> Gunakan tombol hijau untuk mencetak atau simpan sebagai PDF dengan ukuran kertas F4.</li>
+            </ul>
+        </div>
+    </details>
+
+    <!-- PENJELASAN SKORING -->
+    <details>
+        <summary style="background: #2c3e50;">PENJELASAN TABEL NILAI</summary>
+        <div class="menu-content guide-text">
+            Tabel instrumen terdiri dari 17 komponen yang dinilai dengan bobot:
+            <br><br>
+            <b>1. Kriteria Skor:</b>
+            <ul class="guide-list">
+                <li><b>A (5):</b> Sangat Baik / Sangat Lengkap</li>
+                <li><b>B (4):</b> Baik / Lengkap</li>
+                <li><b>C (3):</b> Cukup / Kurang Lengkap</li>
+                <li><b>D (2):</b> Kurang / Tidak Lengkap</li>
+                <li><b>E (1):</b> Sangat Kurang</li>
+            </ul>
+            <b>2. Rumus Nilai:</b>
+            <div style="background:rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; font-family: monospace;">
+                (Total Skor / 85) x 100
+            </div>
+            <small>*85 adalah skor maksimal (17 item x skor 5)</small>
+        </div>
+    </details>
 
     <details>
         <summary>LOGO INSTANSI</summary>
@@ -244,9 +291,9 @@
                 <label>NIP Kepala Sekolah</label>
                 <input type="text" id="inNipKasek" value=".............................." oninput="updatePreview()">
                 <label>Pengawas Sekolah</label>
-                <input type="text" id="inPengawas" value=".............................." oninput="updatePreview()">
+                <input type="text" id="inPengawas" value="H. ANWAR SAHADAT, S.PD.,M.SI" oninput="updatePreview()">
                 <label>NIP Pengawas</label>
-                <input type="text" id="inNipPengawas" value=".............................." oninput="updatePreview()">
+                <input type="text" id="inNipPengawas" value="199605031998031010" oninput="updatePreview()">
             </div>
         </div>
     </details>
@@ -264,6 +311,7 @@
     </details>
 
     <button class="btn-print" onclick="window.print()">CETAK DOKUMEN (F4)</button>
+    <button class="btn-reset" onclick="clearLocalStorage()">HAPUS SEMUA ISIAN</button>
     
     <div class="sidebar-desc">
         Aplikasi ini dibuat untuk memudahkan dalam melakukan <b>MONITORING PSAJ</b> pada jenjang Sekolah Dasar.
@@ -326,7 +374,7 @@
                         <td><input type="number" id="tl" oninput="calcSum()"></td>
                         <td><input type="number" id="tp" oninput="calcSum()"></td>
                         <td id="tt" style="font-weight:bold;">0</td>
-                        <td><input type="text" style="width:100%; border:none; font-size:10px;"></td>
+                        <td><input type="text" id="inCatatan" style="width:100%; border:none; font-size:10px;" oninput="saveToLocal()"></td>
                     </tr>
                     <tr style="font-weight:bold;">
                         <td id="fRombel">0</td><td id="fRuang">0</td>
@@ -406,8 +454,8 @@
             html += `<tr>
                 <td>${item.id}</td>
                 <td class="text-left">${item.text}</td>
-                <td><input type="radio" name="j${index}"></td>
-                <td><input type="radio" name="j${index}"></td>
+                <td><input type="radio" name="j${index}" value="Y" onchange="saveToLocal()"></td>
+                <td><input type="radio" name="j${index}" value="T" onchange="saveToLocal()"></td>
                 <td><input type="radio" name="n${index}" value="5" onclick="calcScore()"></td>
                 <td><input type="radio" name="n${index}" value="4" onclick="calcScore()"></td>
                 <td><input type="radio" name="n${index}" value="3" onclick="calcScore()"></td>
@@ -420,13 +468,16 @@
             </tr>`;
         });
         body.innerHTML += html;
-        updatePreview();
+        loadFromLocal();
     }
 
     function loadLogo(event) {
         if(event.target.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(){ document.getElementById('logoPreview').src = reader.result; };
+            reader.onload = function(){ 
+                document.getElementById('logoPreview').src = reader.result; 
+                localStorage.setItem('psaj_logo', reader.result);
+            };
             reader.readAsDataURL(event.target.files[0]);
         }
     }
@@ -451,6 +502,7 @@
         document.getElementById('outNipKasekPrint').innerText = document.getElementById('inNipKasek').value;
         document.getElementById('outPengawasPrint').innerText = document.getElementById('inPengawas').value;
         document.getElementById('outNipPengawasPrint').innerText = document.getElementById('inNipPengawas').value;
+        saveToLocal();
     }
 
     function calcSum() {
@@ -469,6 +521,7 @@
         document.getElementById('frl').innerText = rl; document.getElementById('frp').innerText = rp; document.getElementById('frt').innerText = rt;
         document.getElementById('fhl').innerText = hl; document.getElementById('fhp').innerText = hp; document.getElementById('fht').innerText = ht;
         document.getElementById('ftl').innerText = tl; document.getElementById('ftp').innerText = tp; document.getElementById('ftt').innerText = tt;
+        saveToLocal();
     }
 
     function calcScore() {
@@ -479,7 +532,63 @@
         }
         document.getElementById('totalSkor').innerText = total;
         document.getElementById('rataRata').innerText = ((total / 85) * 100).toFixed(2);
+        saveToLocal();
     }
+
+    function saveToLocal() {
+        const allInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
+        const dataText = {};
+        allInputs.forEach(input => {
+            dataText[input.id] = input.value;
+        });
+
+        const allRadios = document.querySelectorAll('input[type="radio"]');
+        const dataRadio = {};
+        allRadios.forEach(radio => {
+            if(radio.checked) {
+                dataRadio[radio.name + "_" + radio.value] = true;
+            }
+        });
+
+        localStorage.setItem('psaj_text_2026', JSON.stringify(dataText));
+        localStorage.setItem('psaj_radio_2026', JSON.stringify(dataRadio));
+    }
+
+    function loadFromLocal() {
+        const savedLogo = localStorage.getItem('psaj_logo');
+        if(savedLogo) document.getElementById('logoPreview').src = savedLogo;
+
+        const savedText = localStorage.getItem('psaj_text_2026');
+        if(savedText) {
+            const data = JSON.parse(savedText);
+            for(const id in data) {
+                const el = document.getElementById(id);
+                if(el) el.value = data[id];
+            }
+        }
+
+        const savedRadio = localStorage.getItem('psaj_radio_2026');
+        if(savedRadio) {
+            const data = JSON.parse(savedRadio);
+            for(const key in data) {
+                const [name, value] = key.split('_');
+                const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+                if(el) el.checked = true;
+            }
+        }
+        
+        updatePreview();
+        calcSum();
+        calcScore();
+    }
+
+    function clearLocalStorage() {
+        if(confirm("Hapus semua data isian?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
     window.onload = initForm;
 </script>
 </body>
