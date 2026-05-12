@@ -3,261 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard Admin - Rohiman Supriyadi</title>
+    <title>Panel PSAJ 2026 - Rohiman Supriyadi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #060d13;
-            --accent-neon: #64ffda; 
-            --text-silver: #e2e8f0;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            
-            /* Warna Warni Menu */
-            --c-1: #00d2ff; --c-2: #00ff87; --c-3: #ff007a;
-            --c-4: #f9d423; --c-5: #b224ef; --c-6: #00f2fe;
+            --bg: #020609;
+            --primary: #64ffda;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            /* Warna Warni */
+            --c1: #00d2ff; --c2: #00ff87; --c3: #ff007a;
+            --c4: #f6d365; --c5: #a18cd1; --c6: #00f2fe;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body, html {
-            margin: 0; padding: 0;
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #060d13;
-            color: var(--text-silver);
+            background: var(--bg);
+            color: #fff;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* HEADER */
+        /* LATAR BELAKANG */
+        .glow-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, #0d2327, #020609);
+            z-index: -1;
+        }
+
+        /* HEADER TETAP DI ATAS (Z-INDEX TERTINGGI) */
         header {
-            height: 70px;
-            background: rgba(6, 13, 19, 0.95);
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+            background: rgba(2, 6, 9, 0.95);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border-bottom: 2px solid var(--primary);
+            display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px;
-            z-index: 9999; /* Sangat Tinggi */
-            flex-shrink: 0;
+            z-index: 999999; /* Paling depan */
         }
 
         .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .brand img { height: 35px; }
-        .brand b { color: var(--accent-neon); display: block; font-size: 14px; }
-        .brand span { font-size: 10px; text-transform: uppercase; opacity: 0.7; display: block; color: #fff; }
+        .brand img { height: 38px; }
+        .brand-text b { color: #fff; font-size: 15px; display: block; }
+        .brand-text span { color: var(--primary); font-size: 10px; font-weight: 800; text-transform: uppercase; }
 
-        /* Tombol Home di Header */
-        #home-btn-container { display: none; }
-        .home-circle {
-            width: 40px; height: 40px;
-            background: var(--glass);
-            border: 1px solid var(--accent-neon);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--accent-neon);
-            cursor: pointer; transition: 0.3s;
-        }
-        .home-circle:hover { background: var(--accent-neon); color: #000; }
-
-        /* AREA KONTEN UTAMA */
-        #main-stage {
-            position: relative;
-            flex-grow: 1;
-            width: 100%;
+        /* Tombol Dashboard (Akan memuat ulang halaman) */
+        #homeBtn {
+            background: var(--primary); color: #000;
+            border: none; padding: 10px 18px; border-radius: 10px;
+            font-weight: 800; font-size: 12px; cursor: pointer;
+            display: none; /* Hanya muncul jika masuk app */
         }
 
-        /* TAMPILAN DASHBOARD */
+        /* AREA DASHBOARD */
         #dashboard-view {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; /* Aktif di awal */
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 20px;
-            overflow-y: auto;
-            z-index: 10;
-            background: radial-gradient(circle at top right, #102a2d, #060d13);
+            margin-top: 75px; height: calc(100vh - 75px);
+            width: 100%; padding: 40px 20px;
+            overflow-y: auto; display: flex; flex-direction: column; align-items: center;
         }
 
-        /* TAMPILAN APLIKASI (IFRAME) */
-        #app-view {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: none; /* Sembunyi di awal */
-            background: #fff;
-            z-index: 20;
-        }
-        iframe { width: 100%; height: 100%; border: none; }
+        .welcome-text { text-align: center; margin-bottom: 35px; }
+        .welcome-text h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+        .welcome-text p { color: var(--primary); font-size: 14px; font-weight: 600; }
 
-        /* STYLE DASHBOARD */
-        .welcome-text { text-align: center; margin-bottom: 30px; }
-        .welcome-text h2 { font-size: 24px; margin: 0; color: #fff; }
-        .welcome-text p { color: var(--accent-neon); font-weight: 600; margin: 5px 0 0 0; }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px; width: 100%; max-width: 800px;
+        /* MENU GRID */
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+            gap: 15px; width: 100%; max-width: 850px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 25px 10px;
+            text-align: center; cursor: pointer; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
-        .card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.08); }
+        .card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.1); border-color: #fff; }
         .card i { font-size: 35px; }
         .card span { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fff; }
 
-        /* Warna Ikon & Border Hover */
-        .c1 i { color: var(--c-1); } .c1:hover { border-color: var(--c-1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); }
-        .c2 i { color: var(--c-2); } .c2:hover { border-color: var(--c-2); box-shadow: 0 0 15px rgba(0, 255, 135, 0.2); }
-        .c3 i { color: var(--c-3); } .c3:hover { border-color: var(--c-3); box-shadow: 0 0 15px rgba(255, 0, 122, 0.2); }
-        .c4 i { color: var(--c-4); } .c4:hover { border-color: var(--c-4); box-shadow: 0 0 15px rgba(249, 212, 35, 0.2); }
-        .c5 i { color: var(--c-5); } .c5:hover { border-color: var(--c-5); box-shadow: 0 0 15px rgba(178, 36, 239, 0.2); }
-        .c6 i { color: var(--c-6); } .c6:hover { border-color: var(--c-6); box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); }
+        .c1 i { color: var(--c1); } .c2 i { color: var(--c2); }
+        .c3 i { color: var(--c3); } .c4 i { color: var(--c4); }
+        .c5 i { color: var(--c5); } .c6 i { color: var(--c6); }
 
-        /* Progress Bar */
+        /* AREA APLIKASI */
+        #app-view {
+            position: fixed; top: 75px; left: 0; width: 100%; height: calc(100vh - 75px);
+            background: #fff; display: none; z-index: 500000;
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* LOADING LINE */
         #loader {
             position: fixed; top: 0; left: 0; height: 3px; width: 0;
-            background: var(--accent-neon); z-index: 10000; transition: 0.3s;
+            background: var(--primary); z-index: 1000000; transition: 0.3s;
         }
 
         @media (max-width: 600px) {
-            .menu-grid { grid-template-columns: repeat(2, 1fr); }
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .welcome-text h1 { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="glow-bg"></div>
     <div id="loader"></div>
 
     <header>
-        <div class="brand" onclick="goHome()">
-            <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
-            <div class="brand-info">
+        <!-- Logo Klik: Reload Halaman (Pasti Balik ke Dashboard) -->
+        <div class="brand" onclick="window.location.reload()">
+            <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png">
+            <div class="brand-text">
+                <b>ROHIMAN SUPRIYADI</b>
                 <span>Panitia PSAJ 2026</span>
-                <b>Rohiman Supriyadi</b>
             </div>
         </div>
-
-        <div id="home-btn-container">
-            <div class="home-circle" onclick="goHome()">
-                <i class="fa-solid fa-house"></i>
-            </div>
-        </div>
+        <!-- Tombol Home Klik: Reload Halaman -->
+        <button id="homeBtn" onclick="window.location.reload()">
+            <i class="fa-solid fa-house"></i> DASHBOARD
+        </button>
     </header>
 
-    <main id="main-stage">
-        
-        <!-- VIEW 1: DASHBOARD UTAMA -->
-        <div id="dashboard-view">
-            <div class="welcome-text">
-                <h2 id="greet-msg">Selamat Datang</h2>
-                <p id="time-msg">Senin, 20 Januari 2026</p>
-            </div>
-
-            <div class="menu-grid">
-                <div class="card c1" onclick="openApp('app-album.html')">
-                    <i class="fa-solid fa-images"></i>
-                    <span>Album PSAJ</span>
-                </div>
-                <div class="card c2" onclick="openApp('app-ljk.html')">
-                    <i class="fa-solid fa-file-contract"></i>
-                    <span>LJK Siswa</span>
-                </div>
-                <div class="card c3" onclick="openApp('app-monitoring.html')">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span>Instrumen</span>
-                </div>
-                <div class="card c4" onclick="openApp('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/')">
-                    <i class="fa-solid fa-address-card"></i>
-                    <span>Cetak Kartu</span>
-                </div>
-                <div class="card c5" onclick="openApp('https://imanschool.my.id/aplikasi-nilai/#/login')">
-                    <i class="fa-solid fa-database"></i>
-                    <span>Data Nilai</span>
-                </div>
-                <div class="card c6" onclick="openApp('app-nomor-meja.html')">
-                    <i class="fa-solid fa-table-list"></i>
-                    <span>Nomor Meja</span>
-                </div>
-            </div>
+    <!-- DASHBOARD -->
+    <main id="dashboard-view">
+        <div class="welcome-text">
+            <h1 id="salam">Selamat Datang</h1>
+            <p id="jam"></p>
         </div>
 
-        <!-- VIEW 2: TEMPAT APLIKASI RUNNING -->
-        <div id="app-view">
-            <iframe id="app-frame" src=""></iframe>
+        <div class="grid">
+            <div class="card c1" onclick="bukaHalaman('app-album.html')">
+                <i class="fa-solid fa-images"></i>
+                <span>Album PSAJ</span>
+            </div>
+            <div class="card c2" onclick="bukaHalaman('app-ljk.html')">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>LJK Siswa</span>
+            </div>
+            <div class="card c3" onclick="bukaHalaman('app-monitoring.html')">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Instrumen</span>
+            </div>
+            <div class="card c4" onclick="bukaHalaman('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/')">
+                <i class="fa-solid fa-address-card"></i>
+                <span>Cetak Kartu</span>
+            </div>
+            <div class="card c5" onclick="bukaHalaman('https://imanschool.my.id/aplikasi-nilai/#/login')">
+                <i class="fa-solid fa-database"></i>
+                <span>Data Nilai</span>
+            </div>
+            <div class="card c6" onclick="bukaHalaman('app-nomor-meja.html')">
+                <i class="fa-solid fa-table-cells"></i>
+                <span>Nomor Meja</span>
+            </div>
         </div>
-
     </main>
 
+    <!-- CONTAINER APLIKASI -->
+    <div id="app-view">
+        <iframe id="layarApp" src=""></iframe>
+    </div>
+
     <script>
+        const appLayar = document.getElementById('app-view');
+        const frame = document.getElementById('layarApp');
+        const homeBtn = document.getElementById('homeBtn');
         const loader = document.getElementById('loader');
-        const dashView = document.getElementById('dashboard-view');
-        const appView = document.getElementById('app-view');
-        const appFrame = document.getElementById('app-frame');
-        const homeBtn = document.getElementById('home-btn-container');
 
-        // Fungsi Buka Aplikasi
-        function openApp(url) {
-            loader.style.width = '30%';
-            appFrame.src = url;
+        function bukaHalaman(url) {
+            loader.style.width = '40%';
+            frame.src = url;
 
-            appFrame.onload = function() {
+            frame.onload = function() {
                 loader.style.width = '100%';
                 setTimeout(() => {
                     loader.style.width = '0';
-                    dashView.style.display = 'none'; // Sembunyikan Dashboard
-                    appView.style.display = 'block'; // Munculkan App
-                    homeBtn.style.display = 'block'; // Munculkan tombol home di header
+                    appLayar.style.display = 'block'; // Tampilkan aplikasi
+                    homeBtn.style.display = 'block'; // Munculkan tombol home
                 }, 300);
             };
         }
 
-        // Fungsi Kembali ke Dashboard (Pasti Berhasil)
-        function goHome() {
-            loader.style.width = '100%';
+        // Jam & Tanggal
+        function updateJam() {
+            const n = new Date();
+            const h = n.getHours();
+            let s = "Selamat Malam";
+            if(h < 11) s = "Selamat Pagi";
+            else if(h < 15) s = "Selamat Siang";
+            else if(h < 19) s = "Selamat Sore";
             
-            setTimeout(() => {
-                loader.style.width = '0';
-                
-                // Reset Tampilan
-                appView.style.display = 'none'; 
-                dashView.style.display = 'flex'; 
-                homeBtn.style.display = 'none';
-                
-                // Matikan Iframe agar hemat baterai/RAM
-                appFrame.src = "";
-            }, 300);
+            document.getElementById('salam').innerText = s + ", Rekan Guru";
+            document.getElementById('jam').innerText = n.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + " | " + n.toLocaleTimeString('id-ID');
         }
-
-        // Jam & Tanggal Realtime
-        function updateTime() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const timeStr = now.toLocaleTimeString('id-ID').replace(/\./g, ':');
-            document.getElementById('time-msg').innerText = `${now.toLocaleDateString('id-ID', options)} | ${timeStr}`;
-
-            const h = now.getHours();
-            let g = "Selamat Malam";
-            if(h < 11) g = "Selamat Pagi";
-            else if(h < 15) g = "Selamat Siang";
-            else if(h < 19) g = "Selamat Sore";
-            document.getElementById('greet-msg').innerText = `${g}, Rekan Guru!`;
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
+        setInterval(updateJam, 1000);
+        updateJam();
     </script>
 </body>
 </html>
