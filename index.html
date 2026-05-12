@@ -8,13 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Palette: Midnight Deep Teal */
             --bg-dark: #060d13;
-            --primary-teal: #0d1f23;
-            --accent-neon: #64ffda; /* Hijau Mint Neon */
-            --glass-white: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-neon: #64ffda; 
             --text-silver: #e2e8f0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            
+            /* Warna Warni Menu */
+            --c-1: #00d2ff; --c-2: #00ff87; --c-3: #ff007a;
+            --c-4: #f9d423; --c-5: #b224ef; --c-6: #00f2fe;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -23,226 +25,239 @@
             margin: 0; padding: 0;
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #060d13;
+            color: var(--text-silver);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            /* Background Mesh Gradient yang Mewah */
+        }
+
+        /* HEADER */
+        header {
+            height: 70px;
+            background: rgba(6, 13, 19, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 9999; /* Sangat Tinggi */
+            flex-shrink: 0;
+        }
+
+        .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .brand img { height: 35px; }
+        .brand b { color: var(--accent-neon); display: block; font-size: 14px; }
+        .brand span { font-size: 10px; text-transform: uppercase; opacity: 0.7; display: block; color: #fff; }
+
+        /* Tombol Home di Header */
+        #home-btn-container { display: none; }
+        .home-circle {
+            width: 40px; height: 40px;
+            background: var(--glass);
+            border: 1px solid var(--accent-neon);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent-neon);
+            cursor: pointer; transition: 0.3s;
+        }
+        .home-circle:hover { background: var(--accent-neon); color: #000; }
+
+        /* AREA KONTEN UTAMA */
+        #main-stage {
+            position: relative;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        /* TAMPILAN DASHBOARD */
+        #dashboard-view {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; /* Aktif di awal */
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            overflow-y: auto;
+            z-index: 10;
             background: radial-gradient(circle at top right, #102a2d, #060d13);
         }
 
-        /* Pattern halus di background */
-        body::before {
-            content: "";
+        /* TAMPILAN APLIKASI (IFRAME) */
+        #app-view {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2364ffda' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            pointer-events: none;
+            display: none; /* Sembunyi di awal */
+            background: #fff;
+            z-index: 20;
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* STYLE DASHBOARD */
+        .welcome-text { text-align: center; margin-bottom: 30px; }
+        .welcome-text h2 { font-size: 24px; margin: 0; color: #fff; }
+        .welcome-text p { color: var(--accent-neon); font-weight: 600; margin: 5px 0 0 0; }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px; width: 100%; max-width: 800px;
         }
 
-        /* HEADER DASHBOARD */
-        .top-nav {
-            flex-shrink: 0;
-            background: rgba(6, 13, 19, 0.8);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            padding: 12px 20px;
-            z-index: 2000;
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.08); }
+        .card i { font-size: 35px; }
+        .card span { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fff; }
+
+        /* Warna Ikon & Border Hover */
+        .c1 i { color: var(--c-1); } .c1:hover { border-color: var(--c-1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); }
+        .c2 i { color: var(--c-2); } .c2:hover { border-color: var(--c-2); box-shadow: 0 0 15px rgba(0, 255, 135, 0.2); }
+        .c3 i { color: var(--c-3); } .c3:hover { border-color: var(--c-3); box-shadow: 0 0 15px rgba(255, 0, 122, 0.2); }
+        .c4 i { color: var(--c-4); } .c4:hover { border-color: var(--c-4); box-shadow: 0 0 15px rgba(249, 212, 35, 0.2); }
+        .c5 i { color: var(--c-5); } .c5:hover { border-color: var(--c-5); box-shadow: 0 0 15px rgba(178, 36, 239, 0.2); }
+        .c6 i { color: var(--c-6); } .c6:hover { border-color: var(--c-6); box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); }
+
+        /* Progress Bar */
+        #loader {
+            position: fixed; top: 0; left: 0; height: 3px; width: 0;
+            background: var(--accent-neon); z-index: 10000; transition: 0.3s;
         }
 
-        @media (min-width: 992px) {
-            .top-nav {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                height: 90px;
-                padding: 0 40px;
-            }
-        }
-
-        /* BRANDING */
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .brand img { 
-            height: 40px; 
-            filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.3));
-        }
-
-        .brand-text h1 { 
-            font-size: 14px; 
-            margin: 0; 
-            color: var(--text-silver);
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            font-weight: 700;
-            opacity: 0.8;
-        }
-
-        .brand-text b {
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 13px;
-            text-transform: uppercase;
-            display: block;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-
-        /* NAVIGASI HORIZONTAL SCROLL */
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 5px 2px 12px 2px;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-        }
-        .nav-links::-webkit-scrollbar { display: none; }
-
-        .nav-item {
-            flex: 0 0 auto;
-            padding: 10px 20px;
-            color: rgba(255,255,255,0.4);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 10px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            background: var(--glass-white);
-            border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-
-        .nav-item i { 
-            font-size: 18px; 
-        }
-
-        .nav-item:hover {
-            color: var(--accent-neon);
-            border-color: var(--accent-neon);
-            background: rgba(100, 255, 218, 0.05);
-        }
-
-        .nav-item.active {
-            background: rgba(100, 255, 218, 0.1);
-            color: var(--accent-neon);
-            border-color: var(--accent-neon);
-            box-shadow: 0 0 15px rgba(100, 255, 218, 0.2);
-        }
-
-        /* IFRAME CONTAINER */
-        .main-container {
-            flex-grow: 1;
-            background: #ffffff; /* Konten aplikasi tetap putih agar mudah dibaca */
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-
-        /* Progress Bar Animasi */
-        .progress-line {
-            position: absolute;
-            top: 0; left: 0; height: 3px;
-            background: var(--accent-neon);
-            width: 0;
-            z-index: 3000;
-            transition: 0.4s ease;
-            box-shadow: 0 0 10px var(--accent-neon);
-        }
-
-        @media print {
-            .top-nav { display: none !important; }
+        @media (max-width: 600px) {
+            .menu-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 
-    <div id="loader" class="progress-line"></div>
+    <div id="loader"></div>
 
-    <header class="top-nav">
-        <div class="brand">
+    <header>
+        <div class="brand" onclick="goHome()">
             <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
-            <div class="brand-text">
-                <h1>PANITIA PSAJ 2026</h1>
+            <div class="brand-info">
+                <span>Panitia PSAJ 2026</span>
                 <b>Rohiman Supriyadi</b>
             </div>
         </div>
 
-        <nav class="nav-links">
-            <a href="javascript:void(0)" onclick="loadApp('app-album.html', this)" class="nav-item active">
-                <i class="fa-solid fa-layer-group"></i>
-                <span>Album</span>
-            </a>
-            <a href="javascript:void(0)" onclick="loadApp('app-ljk.html', this)" class="nav-item">
-                <i class="fa-solid fa-file-pen"></i>
-                <span>LJK</span>
-            </a>
-            <a href="javascript:void(0)" onclick="loadApp('app-monitoring.html', this)" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>INSTR-PSAJ</span>
-            </a>
-            <a href="javascript:void(0)" onclick="loadApp('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/', this)" class="nav-item">
-                <i class="fa-solid fa-address-card"></i>
-                <span>Kartu</span>
-            </a>
-            <a href="javascript:void(0)" onclick="loadApp('https://imanschool.my.id/aplikasi-nilai/#/login', this)" class="nav-item">
-                <i class="fa-solid fa-database"></i>
-                <span>Nilai</span>
-            </a>
-            <a href="javascript:void(0)" onclick="loadApp('app-meja-v2.html', this)" class="nav-item">
-                <i class="fa-solid fa-border-all"></i>
-                <span>Meja V2</span>
-            </a>
-            <a href="javascript:void(0)" onclick="loadApp('app-nomor-meja.html', this)" class="nav-item">
-                <i class="fa-solid fa-hashtag"></i>
-                <span>No Meja</span>
-            </a>
-        </nav>
+        <div id="home-btn-container">
+            <div class="home-circle" onclick="goHome()">
+                <i class="fa-solid fa-house"></i>
+            </div>
+        </div>
     </header>
 
-    <main class="main-container">
-        <iframe id="content-frame" src="app-album.html" allow="print"></iframe>
+    <main id="main-stage">
+        
+        <!-- VIEW 1: DASHBOARD UTAMA -->
+        <div id="dashboard-view">
+            <div class="welcome-text">
+                <h2 id="greet-msg">Selamat Datang</h2>
+                <p id="time-msg">Senin, 20 Januari 2026</p>
+            </div>
+
+            <div class="menu-grid">
+                <div class="card c1" onclick="openApp('app-album.html')">
+                    <i class="fa-solid fa-images"></i>
+                    <span>Album PSAJ</span>
+                </div>
+                <div class="card c2" onclick="openApp('app-ljk.html')">
+                    <i class="fa-solid fa-file-contract"></i>
+                    <span>LJK Siswa</span>
+                </div>
+                <div class="card c3" onclick="openApp('app-monitoring.html')">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Instrumen</span>
+                </div>
+                <div class="card c4" onclick="openApp('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/')">
+                    <i class="fa-solid fa-address-card"></i>
+                    <span>Cetak Kartu</span>
+                </div>
+                <div class="card c5" onclick="openApp('https://imanschool.my.id/aplikasi-nilai/#/login')">
+                    <i class="fa-solid fa-database"></i>
+                    <span>Data Nilai</span>
+                </div>
+                <div class="card c6" onclick="openApp('app-nomor-meja.html')">
+                    <i class="fa-solid fa-table-list"></i>
+                    <span>Nomor Meja</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: TEMPAT APLIKASI RUNNING -->
+        <div id="app-view">
+            <iframe id="app-frame" src=""></iframe>
+        </div>
+
     </main>
 
     <script>
-        function loadApp(url, element) {
-            const frame = document.getElementById('content-frame');
-            const loader = document.getElementById('loader');
-            
-            loader.style.width = '40%';
-            frame.style.opacity = '0.5';
-            frame.src = url;
+        const loader = document.getElementById('loader');
+        const dashView = document.getElementById('dashboard-view');
+        const appView = document.getElementById('app-view');
+        const appFrame = document.getElementById('app-frame');
+        const homeBtn = document.getElementById('home-btn-container');
 
-            frame.onload = function() {
+        // Fungsi Buka Aplikasi
+        function openApp(url) {
+            loader.style.width = '30%';
+            appFrame.src = url;
+
+            appFrame.onload = function() {
                 loader.style.width = '100%';
-                setTimeout(() => { 
+                setTimeout(() => {
                     loader.style.width = '0';
-                    frame.style.opacity = '1';
-                }, 400);
+                    dashView.style.display = 'none'; // Sembunyikan Dashboard
+                    appView.style.display = 'block'; // Munculkan App
+                    homeBtn.style.display = 'block'; // Munculkan tombol home di header
+                }, 300);
             };
-            
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            element.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
+
+        // Fungsi Kembali ke Dashboard (Pasti Berhasil)
+        function goHome() {
+            loader.style.width = '100%';
+            
+            setTimeout(() => {
+                loader.style.width = '0';
+                
+                // Reset Tampilan
+                appView.style.display = 'none'; 
+                dashView.style.display = 'flex'; 
+                homeBtn.style.display = 'none';
+                
+                // Matikan Iframe agar hemat baterai/RAM
+                appFrame.src = "";
+            }, 300);
+        }
+
+        // Jam & Tanggal Realtime
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeStr = now.toLocaleTimeString('id-ID').replace(/\./g, ':');
+            document.getElementById('time-msg').innerText = `${now.toLocaleDateString('id-ID', options)} | ${timeStr}`;
+
+            const h = now.getHours();
+            let g = "Selamat Malam";
+            if(h < 11) g = "Selamat Pagi";
+            else if(h < 15) g = "Selamat Siang";
+            else if(h < 19) g = "Selamat Sore";
+            document.getElementById('greet-msg').innerText = `${g}, Rekan Guru!`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
     </script>
 </body>
 </html>
