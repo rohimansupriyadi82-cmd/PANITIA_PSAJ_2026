@@ -11,10 +11,8 @@
             --bg: #010a10;
             --primary: #64ffda;
             --card-bg: rgba(255, 255, 255, 0.07);
-            /* Warna Ikon */
             --c1: #00d2ff; --c2: #00ff87; --c3: #ff007a;
             --c4: #f6d365; --c5: #a18cd1; --c6: #00f2fe; --c7: #ffa502;
-            /* Tambahan 3 Warna Baru */
             --c8: #ff6b81; --c9: #7bed9f; --c10: #70a1ff; 
         }
 
@@ -28,32 +26,24 @@
             overflow: hidden;
         }
 
-        /* --- STYLE VIDEO BACKGROUND --- */
         .video-bg {
-            position: fixed;
-            top: 0; left: 0; 
+            position: fixed; top: 0; left: 0; 
             width: 100vw; height: 100vh;
-            object-fit: cover;
-            z-index: -2;
+            object-fit: cover; z-index: -2;
         }
 
-        /* Overlay agar menu tetap terbaca jelas */
         .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, rgba(1, 10, 16, 0.4), rgba(1, 10, 16, 0.7));
             z-index: -1;
         }
 
-        /* --- UI COMPONENTS --- */
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
-            background: rgba(1, 10, 16, 0.85);
-            backdrop-filter: blur(15px);
+            background: rgba(1, 10, 16, 0.85); backdrop-filter: blur(15px);
             border-bottom: 2px solid var(--primary);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px;
-            z-index: 999999;
+            padding: 0 20px; z-index: 999999;
         }
 
         .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
@@ -74,13 +64,25 @@
             overflow-y: auto; display: flex; flex-direction: column; align-items: center;
         }
 
-        .welcome-text { text-align: center; margin-bottom: 35px; }
+        /* Animasi Text Welcome (Turun Lembut) */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .welcome-text { text-align: center; margin-bottom: 35px; animation: fadeInDown 0.8s ease-out forwards; }
         .welcome-text h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .welcome-text p { color: var(--primary); font-size: 14px; font-weight: 600; text-shadow: 0 1px 5px rgba(0,0,0,0.5); }
 
+        /* PERUBAHAN KE FLEXBOX AGAR RATA TENGAH (TIDAK KAKU KIRI) */
         .grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            display: flex; flex-wrap: wrap; justify-content: center;
             gap: 15px; width: 100%; max-width: 900px;
+        }
+
+        /* Animasi Card (Muncul Dari Bawah) */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card {
@@ -88,25 +90,47 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px; padding: 25px 10px;
-            text-align: center; cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center; cursor: pointer; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; flex-direction: column; align-items: center; gap: 12px;
+            width: calc(25% - 15px); /* Menyesuaikan Lebar Otomatis */
+            min-width: 130px; max-width: 160px;
+            
+            /* Terapkan Animasi */
+            opacity: 0; 
+            animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         
+        /* Efek Saat Disentuh / Hover */
         .card:hover { 
-            transform: translateY(-8px); 
+            transform: translateY(-8px) scale(1.02); /* Sedikit membesar */
             background: rgba(100, 255, 218, 0.12); 
             border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 255, 218, 0.2);
         }
         
-        .card i { font-size: 32px; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); }
+        /* Efek Ikon Goyang Saat Hover */
+        .card i { 
+            font-size: 32px; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover i {
+            transform: scale(1.2) rotate(5deg); /* Ikon membesar & miring dikit */
+        }
+
         .card span { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
 
-        .c1 i { color: var(--c1); } .c2 i { color: var(--c2); }
-        .c3 i { color: var(--c3); } .c4 i { color: var(--c4); }
-        .c5 i { color: var(--c5); } .c6 i { color: var(--c6); } .c7 i { color: var(--c7); }
-        /* Kelas warna baru */
-        .c8 i { color: var(--c8); } .c9 i { color: var(--c9); } .c10 i { color: var(--c10); }
+        /* Setel Delay Muncul Satu per Satu (Staggered Animation) */
+        .c1 { animation-delay: 0.1s; } .c1 i { color: var(--c1); }
+        .c2 { animation-delay: 0.2s; } .c2 i { color: var(--c2); }
+        .c3 { animation-delay: 0.3s; } .c3 i { color: var(--c3); }
+        .c4 { animation-delay: 0.4s; } .c4 i { color: var(--c4); }
+        .c5 { animation-delay: 0.5s; } .c5 i { color: var(--c5); }
+        .c6 { animation-delay: 0.6s; } .c6 i { color: var(--c6); }
+        .c7 { animation-delay: 0.7s; } .c7 i { color: var(--c7); }
+        .c8 { animation-delay: 0.8s; } .c8 i { color: var(--c8); }
+        .c9 { animation-delay: 0.9s; } .c9 i { color: var(--c9); }
+        .c10{ animation-delay: 1.0s; } .c10 i { color: var(--c10); }
 
         #app-view {
             position: fixed; top: 75px; left: 0; width: 100%; height: calc(100vh - 75px);
@@ -120,7 +144,7 @@
         }
 
         @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
+            .card { width: calc(50% - 15px); } /* 2 kolom di HP */
             .welcome-text h1 { font-size: 24px; }
         }
     </style>
@@ -172,7 +196,7 @@
             </div>
             <div class="card c5" onclick="window.open('https://imanschool.my.id/aplikasi-nilai/#/login', '_blank')">
                 <i class="fa-solid fa-database"></i>
-                <span>Data Nilai</span>
+                <span>Olah Nilai</span>
             </div>
             <div class="card c6" onclick="bukaHalaman('app-nomor-meja.html')">
                 <i class="fa-solid fa-table-list"></i>
@@ -182,8 +206,7 @@
                 <i class="fa-solid fa-table-cells"></i>
                 <span>Meja (V2)</span>
             </div>
-
-            <div class="card c8" onclick="bukaHalaman('tanda-terima-honor.html')">
+            <div class="card c8" onclick="bukaHalaman('tanda terima honor.html')">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span>Terima Honor</span>
             </div>
