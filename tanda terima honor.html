@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP-HONOR v2.0 - ROHIMAN SUPRIYADI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root { 
+            --width-f4: 330mm; 
+            --height-f4: 215mm; 
+            --primary-green: #065f46;
+            --dark-green: #064e3b;
+            --light-green: #ecfdf5;
+            --accent-green: #10b981;
+            --sidebar-width: 300px;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #f1f5f9; 
+            color: #1e293b; 
+            margin: 0; 
+            display: flex; 
+            min-height: 100vh;
+        }
+        
+        /* SIDEBAR FIXED LEFT */
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: white; 
+            border-right: 1px solid #e2e8f0; 
+            display: flex; 
+            flex-direction: column; 
+            position: fixed; 
+            height: 100vh; 
+            left: 0;
+            top: 0;
+            z-index: 50; 
+            box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+        }
+
+        .sidebar-header { 
+            padding: 30px 24px; 
+            background: var(--primary-green); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.15); 
+        }
+
+        .nav-menu { 
+            padding: 24px 16px; 
+            flex-grow: 1; 
+        }
+
+        .nav-tab { 
+            padding: 14px 18px; 
+            margin-bottom: 6px; 
+            cursor: pointer; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            color: #64748b; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            font-size: 14px;
+        }
+
+        .nav-tab:hover { 
+            background: var(--light-green); 
+            color: var(--primary-green); 
+        }
+
+        .nav-tab.active { 
+            background: var(--primary-green); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2);
+        }
+
+        /* CONTENT AREA */
+        .content-area { 
+            margin-left: var(--sidebar-width); 
+            flex-grow: 1; 
+            padding: 40px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .menu-panel { 
+            display: none; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 24px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03); 
+            width: 100%; 
+            max-width: 1100px; 
+            margin-bottom: 40px; 
+            border: 1px solid #f1f5f9; 
+        }
+
+        .menu-panel.active { display: block; }
+
+        .input-custom { 
+            width: 100%; 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            transition: all 0.2s; 
+        }
+
+        .input-custom:focus { 
+            border-color: var(--accent-green); 
+            background: white;
+            outline: none; 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); 
+        }
+
+        .print-container { 
+            background: white; 
+            width: var(--width-f4); 
+            min-height: var(--height-f4); 
+            padding: 15mm 20mm; 
+            color: black; 
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.1); 
+            position: relative; 
+        }
+
+        .table-spj { border: 1.5pt solid #000; border-collapse: collapse; width: 100%; }
+        .table-spj th, .table-spj td { border: 1pt solid #000; height: 35px; font-size: 9pt; padding: 4px 8px; }
+        .table-spj th { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; font-weight: 800; }
+
+        .editable-cell { background-color: #fffdec; border: 1px dashed #d9d9d9 !important; cursor: text; font-weight: bold; padding: 2px 4px; }
+        
+        .btn-primary { 
+            background: var(--primary-green); 
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            justify-content: center; 
+        }
+        .btn-primary:hover { background: var(--dark-green); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2); }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; display: block; }
+            .content-area { margin-left: 0; padding: 0; width: 100%; }
+            .print-container { box-shadow: none !important; margin: 0 !important; width: 100%; padding: 10mm 15mm; }
+            .editable-cell { background-color: transparent; border: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar no-print">
+        <div class="sidebar-header">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-500/20 p-2.5 rounded-xl">
+                    <i class="fas fa-file-invoice-dollar text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black leading-none tracking-tight">SIP-HONOR</h1>
+                    <p class="text-[10px] opacity-80 mt-1.5 uppercase tracking-[0.2em] font-bold">Smart System v2.0</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-tab active" onclick="openTab(event, 'tab-db')">
+                <i class="fas fa-database text-lg"></i> Database CSV
+            </div>
+            <div class="nav-tab" onclick="openTab(event, 'tab-manual')">
+                <i class="fas fa-keyboard text-lg"></i> Input Manual
+            </div>
+            <div class="nav-tab" onclick="openTab(event, 'tab-settings')">
+                <i class="fas fa-cog text-lg"></i> Pengaturan Dok
+            </div>
+            
+            <div class="mt-12 px-2">
+                <button onclick="window.print()" class="w-full bg-emerald-600 text-white p-4 rounded-2xl font-black hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 shadow-lg shadow-emerald-200">
+                    <i class="fas fa-print"></i> CETAK LAPORAN
+                </button>
+            </div>
+        </nav>
+
+        <div class="p-8 text-[11px] text-slate-400 text-center border-t border-slate-100">
+            Dikembangkan Oleh:<br>
+            <span class="font-bold text-emerald-700">ROHIMAN SUPRIYADI</span><br>
+            © 2026 SIP-HONOR
+        </div>
+    </aside>
+
+    <div class="content-area">
+        
+        <div id="tab-db" class="menu-panel active no-print">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="font-black text-slate-800 flex items-center gap-3 text-xl">
+                    <i class="fas fa-folder-open text-emerald-600"></i> Sumber Data Lembaga
+                </h3>
+                <button onclick="downloadTemplate()" class="text-xs bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-xl hover:bg-emerald-100 transition-all flex items-center gap-2 font-bold border border-emerald-200">
+                    <i class="fas fa-file-excel"></i> UNDUH TEMPLATE CSV
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <label class="block text-[10px] font-black text-slate-400 mb-3 uppercase tracking-widest">1. Upload File</label>
+                    <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="importCSV(this)">
+                    <button onclick="document.getElementById('csvFileInput').click()" class="w-full bg-white border-2 border-dashed border-emerald-200 text-emerald-600 p-5 rounded-xl font-bold hover:border-emerald-500 hover:bg-emerald-50 transition-all group">
+                        <i class="fas fa-cloud-upload-alt text-xl mb-2 block"></i> IMPORT CSV BARU
+                    </button>
+                </div>
+                
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <label class="block text-[10px] font-black text-slate-400 mb-3 uppercase tracking-widest">2. Cari Lembaga</label>
+                    <div class="relative">
+                        <input type="text" id="inputNPSN" placeholder="NPSN atau Nama..." onkeyup="filterLembaga()" class="input-custom pr-10">
+                        <i class="fas fa-search absolute right-4 top-4 text-slate-300"></i>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <label class="block text-[10px] font-black text-slate-400 mb-3 uppercase tracking-widest">3. Pilih Hasil</label>
+                    <div id="daftarNPSN">
+                        <div class="p-3 bg-white rounded-lg border border-dashed border-slate-200 text-slate-400 italic text-xs">
+                            Menunggu pencarian...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-manual" class="menu-panel no-print">
+            <h3 class="font-black text-slate-800 mb-6 flex items-center gap-3 text-xl">
+                <i class="fas fa-user-plus text-emerald-600"></i> Tambah Penerima Manual
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <input type="text" id="addNama" placeholder="Nama Lengkap" class="input-custom">
+                <input type="text" id="addJabatan" placeholder="Jabatan" class="input-custom">
+                <input type="number" id="addHonor" placeholder="Honor (Rp)" class="input-custom">
+                <input type="text" id="addBank" placeholder="Bank & No Rek" class="input-custom">
+                <button onclick="tambahGuruManual()" class="btn-primary">
+                    <i class="fas fa-plus-circle"></i> TAMBAH
+                </button>
+            </div>
+        </div>
+
+        <div id="tab-settings" class="menu-panel no-print">
+            <h3 class="font-black text-slate-800 mb-6 flex items-center gap-3 text-xl">
+                <i class="fas fa-sliders-h text-emerald-600"></i> Atribut Dokumen
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase">Jenis Tanda Terima</label>
+                    <select id="selectJudul" onchange="updateHeader()" class="input-custom">
+                        <option value="TANDA TERIMA HONORARIUM PENDIDIK DAN TENAGA KEPENDIDIKAN">Honor PTK</option>
+                        <option value="TANDA TERIMA HONORARIUM EKSTRAKURIKULER PRAMUKA">Honor Pramuka</option>
+                        <option value="TANDA TERIMA HONORARIUM EKSTRAKURIKULER PASKIBRA">Honor Paskibra</option>
+                        <option value="TANDA TERIMA HONORARIUM EKSTRAKURIKULER MARAWIS">Honor Marawis</option>
+                        <option value="TANDA TERIMA HONORARIUM EKSTRAKURIKULER HADROH">Honor Hadroh</option>
+                        <option value="TANDA TERIMA HONORARIUM EKSTRAKURIKULER FUTSAL">Honor Futsal</option>
+                        <option value="TANDA TERIMA TRANSPORT PENGAWAS TKA">Transport Pengawas</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase">Periode Triwulan</label>
+                    <select id="selectTriwulan" onchange="updateHeader()" class="input-custom">
+                        <option value="Triwulan 1 ( Januari - Maret )">Triwulan 1</option>
+                        <option value="Triwulan 2 ( April - Juni )">Triwulan 2</option>
+                        <option value="Triwulan 3 ( Juli - September )">Triwulan 3</option>
+                        <option value="Triwulan 4 ( Oktober - Desember )">Triwulan 4</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase">Setting Pajak</label>
+                    <select id="selectPajak" onchange="renderTabel()" class="input-custom">
+                        <option value="0">0% (Tanpa Potongan)</option>
+                        <option value="0.05">5% (Ada NPWP)</option>
+                        <option value="0.06">6% (Tanpa NPWP)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase">Tanggal Bayar</label>
+                    <input type="date" id="inputTanggal" onchange="updateHeader()" class="input-custom">
+                </div>
+            </div>
+        </div>
+
+        <!-- PRINT AREA -->
+        <div id="printArea" class="print-container">
+            <div class="text-center mb-8">
+                <h2 id="judulDisp" class="font-bold uppercase text-sm">TANDA TERIMA HONORARIUM PENDIDIK DAN TENAGA KEPENDIDIKAN</h2>
+                <h1 id="namaSekolahDisp" class="text-3xl font-black uppercase my-1">... NAMA LEMBAGA ...</h1>
+                <p id="triwulanDisp" class="text-sm font-bold uppercase mb-2 italic">Triwulan 1 ( Januari - Maret )</p>
+                <p class="border-b-2 border-black inline-block px-12 italic font-bold text-[10pt] py-1">TAHUN ANGGARAN 2026</p>
+            </div>
+
+            <table class="table-spj">
+                <thead>
+                    <tr class="uppercase text-center">
+                        <th style="width: 4%;">NO</th>
+                        <th style="width: 26%;">NAMA PENERIMA / JABATAN</th>
+                        <th style="width: 17%;">JUMLAH SATUAN (Rp)</th> 
+                        <th style="width: 11%;">JUMLAH (Rp)</th>
+                        <th style="width: 8%;">PAJAK</th>
+                        <th style="width: 11%;">DITERIMA</th>
+                        <th style="width: 13%;">NO. REKENING</th>
+                        <th style="width: 10%;">TTD</th> 
+                        <th class="no-print" style="width: 40px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="isiTabel"></tbody>
+                <tfoot id="footTabel"></tfoot>
+            </table>
+
+            <div class="flex justify-between mt-14 text-center">
+                <div class="w-1/3">
+                    <p class="mb-20 text-sm">Setuju dibayar,<br><strong>Kepala Sekolah</strong></p>
+                    <p id="kepalaDisp" class="font-bold underline uppercase text-sm" contenteditable="true">................</p>
+                    <p class="text-sm">NIP. <span id="nipKepalaDisp" contenteditable="true">................</span></p>
+                </div>
+                <div class="w-1/3">
+                    <p class="mb-20 text-sm italic">Lunas dibayar, Tanggal: <span id="tglLunasDisp">...</span><br><strong>Bendahara</strong></p>
+                    <p id="bendaharaDisp" class="font-bold underline uppercase text-sm" contenteditable="true">................</p>
+                    <p class="text-sm">NIP. <span id="nipBendaharaDisp" contenteditable="true">................</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = [];
+        let dbCsv = {};
+
+        function openTab(evt, tabId) {
+            document.querySelectorAll(".menu-panel").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function init() {
+            const savedData = localStorage.getItem('spj_database_v2');
+            if (savedData) {
+                dbCsv = JSON.parse(savedData);
+            }
+        }
+
+        function downloadTemplate() {
+            const headers = "npsn;nama_sekolah;nama_kepala;nip_kepala;nama_bendahara;nip_bendahara;nama_guru;jabatan;honor;bank;rekening";
+            const sample = "12345678;SD NEGERI CONTOH;Drs. BUDI SANTOSO;197001012000011001;SITI AMINAH, S.Pd;198512122010012002;AHMAD RIFAI;GURU KELAS;500000;BJB 00123456789;REKENING";
+            const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + sample;
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "template_sip_honor_v2.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function importCSV(input) {
+            const file = input.files[0];
+            if (!file) return;
+            Papa.parse(file, {
+                header: true,
+                delimiter: ";",
+                skipEmptyLines: true,
+                complete: function(results) {
+                    dbCsv = {};
+                    results.data.forEach(row => {
+                        const npsn = (row.npsn || "").trim();
+                        if (!npsn) return;
+                        if (!dbCsv[npsn]) {
+                            dbCsv[npsn] = { 
+                                nama: row.nama_sekolah, 
+                                kepala: row.nama_kepala, 
+                                nip_kepala: row.nip_kepala,
+                                bendahara: row.nama_bendahara, 
+                                nip_bendahara: row.nip_bendahara,
+                                gurus: [] 
+                            };
+                        }
+                        dbCsv[npsn].gurus.push(row);
+                    });
+                    localStorage.setItem('spj_database_v2', JSON.stringify(dbCsv));
+                    alert("Database Berhasil Dimuat!");
+                    filterLembaga();
+                }
+            });
+        }
+
+        function filterLembaga() {
+            const keyword = document.getElementById('inputNPSN').value.trim();
+            const listNPSN = document.getElementById('daftarNPSN');
+            
+            if (keyword.length === 0) {
+                listNPSN.innerHTML = `<div class="p-3 bg-white rounded-lg border border-dashed border-slate-200 text-slate-400 italic text-xs">Menunggu pencarian...</div>`;
+                return;
+            }
+
+            const keys = Object.keys(dbCsv);
+            const filtered = keys.filter(npsn => npsn.includes(keyword) || dbCsv[npsn].nama.toLowerCase().includes(keyword.toLowerCase()));
+
+            if (filtered.length > 0) {
+                renderListNPSN(filtered.slice(0, 5)); 
+            } else {
+                listNPSN.innerHTML = `<div class="p-3 text-red-500 italic font-bold text-xs bg-red-50 rounded-xl">Lembaga tidak ditemukan</div>`;
+            }
+        }
+
+        function renderListNPSN(keysToShow) {
+            const listNPSN = document.getElementById('daftarNPSN');
+            listNPSN.innerHTML = keysToShow.map(npsn => `
+                <div onclick="pilihLembaga('${npsn}')" class="group flex items-center justify-between p-3 mb-2 bg-emerald-50 text-emerald-900 rounded-xl cursor-pointer hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100">
+                    <div class="truncate mr-2">
+                        <span class="block text-[9px] uppercase font-bold opacity-60">NPSN: ${npsn}</span>
+                        <span class="text-xs font-black uppercase">${dbCsv[npsn].nama}</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </div>
+            `).join('');
+        }
+
+        function pilihLembaga(npsn) {
+            const lembaga = dbCsv[npsn];
+            document.getElementById('inputNPSN').value = npsn;
+            document.getElementById('namaSekolahDisp').innerText = lembaga.nama;
+            document.getElementById('kepalaDisp').innerText = lembaga.kepala || "................";
+            document.getElementById('nipKepalaDisp').innerText = lembaga.nip_kepala || "................";
+            document.getElementById('bendaharaDisp').innerText = lembaga.bendahara || "................";
+            document.getElementById('nipBendaharaDisp').innerText = lembaga.nip_bendahara || "................";
+            
+            currentData = JSON.parse(JSON.stringify(lembaga.gurus));
+            renderTabel();
+        }
+
+        function formatDuit(v) { return new Intl.NumberFormat('id-ID').format(v); }
+
+        function updateHonor(index, element) {
+            let value = element.innerText.replace(/[^0-9]/g, '');
+            if (value === "") value = 0;
+            currentData[index].honor = parseInt(value);
+            renderTabel();
+            
+            let cell = document.getElementById(`edit-honor-${index}`);
+            cell.focus();
+            let range = document.createRange();
+            let sel = window.getSelection();
+            range.selectNodeContents(cell);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function renderTabel() {
+            const tbody = document.getElementById('isiTabel');
+            const tfoot = document.getElementById('footTabel');
+            const rate = parseFloat(document.getElementById('selectPajak').value);
+            tbody.innerHTML = '';
+            let tBruto = 0, tPajak = 0, tNetto = 0;
+
+            currentData.forEach((g, i) => {
+                const honor = parseInt(g.honor) || 0;
+                const bruto = honor * 3;
+                const pajak = Math.round(bruto * rate);
+                const netto = bruto - pajak;
+                const nomor = i + 1;
+                tBruto += bruto; tPajak += pajak; tNetto += netto;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center">${nomor}</td>
+                        <td>
+                            <div class="font-bold uppercase leading-tight">${g.nama_guru}</div>
+                            <div class="text-[7.5pt] italic text-slate-500 font-medium">${g.jabatan || 'Penerima'}</div>
+                        </td>
+                        <td class="text-center text-[8pt] whitespace-nowrap">
+                            1 Org x 3 Bln x Rp. 
+                            <span id="edit-honor-${i}" class="editable-cell px-1 no-print" contenteditable="true" oninput="updateHonor(${i}, this)">${honor}</span>
+                            <span class="print-only hidden">${formatDuit(honor)}</span>
+                        </td>
+                        <td class="text-right font-medium">${formatDuit(bruto)}</td>
+                        <td class="text-right text-slate-600">${formatDuit(pajak)}</td>
+                        <td class="text-right font-bold">${formatDuit(netto)}</td>
+                        <td class="text-center text-[7pt] uppercase leading-tight font-medium">${g.bank || '-'}<br>${g.rekening || '-'}</td>
+                        <td class="text-left text-[8pt]">${nomor}. ............</td>
+                        <td class="no-print text-center">
+                            <button onclick="currentData.splice(${i},1); renderTabel()" class="text-red-400 hover:text-red-600 transition-colors">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+            
+            tfoot.innerHTML = `<tr class="font-bold bg-slate-50">
+                <td colspan="3" class="text-center py-3 uppercase text-[9pt]">Total Keseluruhan</td>
+                <td class="text-right">${formatDuit(tBruto)}</td>
+                <td class="text-right">${formatDuit(tPajak)}</td>
+                <td class="text-right">${formatDuit(tNetto)}</td>
+                <td colspan="3"></td>
+            </tr>`;
+        }
+
+        function tambahGuruManual() {
+            const nama = document.getElementById('addNama').value;
+            const honor = document.getElementById('addHonor').value;
+            if(!nama || !honor) return alert("Nama dan Honor wajib diisi");
+            currentData.push({
+                nama_guru: nama,
+                jabatan: document.getElementById('addJabatan').value || "Staff",
+                honor: honor,
+                bank: document.getElementById('addBank').value || "-",
+                rekening: ""
+            });
+            renderTabel();
+            document.getElementById('addNama').value = "";
+            document.getElementById('addJabatan').value = "";
+            document.getElementById('addHonor').value = "";
+            document.getElementById('addBank').value = "";
+        }
+
+        function updateHeader() {
+            document.getElementById('judulDisp').innerText = document.getElementById('selectJudul').value;
+            document.getElementById('triwulanDisp').innerText = document.getElementById('selectTriwulan').value;
+            const tgl = document.getElementById('inputTanggal').value;
+            if(tgl) {
+                const opsi = { day: 'numeric', month: 'long', year: 'numeric' };
+                document.getElementById('tglLunasDisp').innerText = new Date(tgl).toLocaleDateString('id-ID', opsi);
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

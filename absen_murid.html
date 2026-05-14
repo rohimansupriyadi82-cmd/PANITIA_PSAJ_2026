@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGAP SISWA - Sistem Informasi Guru & Absensi Presisi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <!-- Tambahan Library untuk Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root { 
+            --width-f4: 330mm; 
+            --height-f4: 215mm;
+        }
+        
+        body { font-family: 'Tahoma', sans-serif; background: #f1f5f9; margin: 0; color: #1e293b; overflow: hidden; }
+        
+        /* Layout Structure */
+        .app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        .sidebar { width: 320px; background: #0f172a; color: white; display: flex; flex-direction: column; flex-shrink: 0; z-index: 50; transition: all 0.3s; border-right: 1px solid #334155; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Accordion Style Sidebar */
+        .acc-item { border-bottom: 1px solid #1e293b; }
+        .acc-trigger { width: 100%; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; background: #1e293b; cursor: pointer; transition: 0.2s; }
+        .acc-trigger:hover { background: #334155; }
+        .acc-trigger h3 { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; }
+        .acc-trigger i.chevron { transition: transform 0.3s; font-size: 10px; }
+        .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #0f172a; }
+        .acc-content.active { max-height: 800px; padding: 20px; }
+        .acc-item.open .chevron { transform: rotate(180deg); }
+        .acc-item.open .acc-trigger h3 { color: #ef4444; }
+
+        .top-nav-candy { 
+            background: linear-gradient(135deg, #991b1b 0%, #ef4444 100%);
+            box-shadow: 0 4px 15px rgba(153, 27, 27, 0.4);
+        }
+
+        .sidebar-scroll { flex: 1; overflow-y: auto; }
+        .side-input { background: #1e293b; border: 1px solid #334155; color: white; width: 100%; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 12px; }
+        .side-label { font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 6px; display: block; }
+
+        /* Preview Area */
+        .preview-wrapper { flex: 1; padding: 20px; background: #cbd5e1; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        
+        /* Container per Halaman */
+        .print-container { 
+            background: white; 
+            width: var(--width-f4); 
+            min-height: var(--height-f4);
+            padding: 10mm 15mm; 
+            box-sizing: border-box; 
+            color: black; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            position: relative; 
+            zoom: 0.75;
+            flex-shrink: 0;
+            page-break-after: always;
+        }
+
+        /* Tabel Presisi */
+        .table-absen { border: 1.2pt solid #000; border-collapse: collapse; width: 100%; table-layout: fixed; margin-bottom: 5mm; }
+        .table-absen th { border: 1pt solid #000; padding: 2px 0; background-color: #f1f5f9 !important; font-size: 6.5pt; font-weight: bold; text-align: center; }
+        .table-absen td { border: 1pt solid #000; padding: 0; font-size: 7.5pt; height: 26px; vertical-align: middle; text-align: center; cursor: pointer; }
+        
+        .cell-H { background-color: #dcfce7 !important; color: #166534; font-weight: bold; }
+        .cell-S { background-color: #fef9c3 !important; color: #854d0e; font-weight: bold; }
+        .cell-I { background-color: #dbeafe !important; color: #1e40af; font-weight: bold; }
+        .cell-A { background-color: #fee2e2 !important; color: #991b1b; font-weight: bold; }
+        
+        .holiday { background-color: #fee2e2 !important; color: #b91c1c !important; } 
+        .sunday { background-color: #fca5a5 !important; color: #7f1d1d !important; }  
+        .saturday { background-color: #e2e8f0 !important; color: #475569 !important; } 
+
+        .rekap-col { background-color: #f8fafc; font-weight: bold; font-size: 6.5pt !important; width: 6.5mm !important; }
+        .input-manual-rekap { width: 100%; height: 100%; border: none; text-align: center; background: transparent; font-weight: bold; font-size: 7.5pt; }
+
+        @media print {
+            @page { size: 330mm 215mm landscape; margin: 0; }
+            body { background: white; overflow: visible; }
+            .no-print { display: none !important; }
+            .app-container { display: block; height: auto; }
+            .sidebar { display: none; }
+            .preview-wrapper { padding: 0 !important; background: white; display: block; overflow: visible; }
+            .print-container { 
+                box-shadow: none !important; 
+                margin: 0 !important; 
+                padding: 10mm 15mm !important; 
+                width: 330mm !important; 
+                height: 215mm !important;
+                zoom: 1 !important; 
+            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+
+        #customContextMenu {
+            display: none; position: absolute; background: white; border: 1px solid #ccc;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 1000; border-radius: 8px; overflow: hidden;
+        }
+        #customContextMenu div { padding: 8px 15px; cursor: pointer; font-size: 12px; font-weight: bold; border-bottom: 1px solid #eee; }
+        #customContextMenu div:hover { background: #f1f5f9; }
+    </style>
+</head>
+<body onclick="closeContextMenu()">
+
+    <div id="customContextMenu">
+        <div onclick="setAbsenManual('H')" class="text-green-700">HADIR (H)</div>
+        <div onclick="setAbsenManual('S')" class="text-yellow-700">SAKIT (S)</div>
+        <div onclick="setAbsenManual('I')" class="text-blue-700">IZIN (I)</div>
+        <div onclick="setAbsenManual('A')" class="text-red-700">ALFA (A)</div>
+        <div onclick="setAbsenManual('')" class="text-gray-500">KOSONGKAN</div>
+    </div>
+
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar no-print">
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="bg-red-600 p-2 rounded-lg"><i class="fas fa-user-graduate text-xl"></i></div>
+                    <div>
+                        <h1 class="text-lg font-black tracking-tighter leading-none">SIGAP <span class="text-red-500">SISWA</span></h1>
+                        <p class="text-[8px] opacity-40 font-bold mt-1 uppercase">Excel Support Edition</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-scroll">
+                <!-- Section 1 -->
+                <div class="acc-item open" id="acc-db">
+                    <div class="acc-trigger" onclick="toggleAcc('acc-db')">
+                        <h3><i class="fas fa-database mr-2"></i> Database Siswa</h3>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="acc-content active">
+                        <input type="file" id="csvFileInput" accept=".csv, .xlsx, .xls" class="text-[10px] w-full mb-3 file:bg-red-600 file:text-white file:border-0 file:rounded file:px-2">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="downloadTemplate()" class="text-[9px] bg-slate-800 py-2 rounded font-bold uppercase transition hover:bg-slate-700"><i class="fas fa-file-excel mr-1"></i> Template</button>
+                            <button onclick="clearAttendance()" class="text-[9px] bg-red-900/30 py-2 rounded font-bold uppercase transition hover:bg-red-900/50">KOSONGKAN</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="acc-item" id="acc-id">
+                    <div class="acc-trigger" onclick="toggleAcc('acc-id')">
+                        <h3><i class="fas fa-school mr-2"></i> Identitas</h3>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="acc-content">
+                        <select id="selJenjang" onchange="updateKelasList()" class="side-input">
+                            <option value="SD">SD</option><option value="TK">TK/PAUD</option>
+                        </select>
+                        <select id="selKelasList" onchange="applyKelasMenu()" class="side-input"></select>
+                        <input type="text" id="inLembaga" oninput="generateTable(); saveState();" placeholder="Nama Sekolah" class="side-input">
+                        <input type="text" id="inKelas" oninput="generateTable(); saveState();" placeholder="Label Kelas" class="side-input">
+                    </div>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="acc-item" id="acc-time">
+                    <div class="acc-trigger" onclick="toggleAcc('acc-time')">
+                        <h3><i class="fas fa-calendar mr-2"></i> Periode</h3>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="acc-content">
+                        <select id="selBulan" onchange="generateTable(); saveState();" class="side-input">
+                            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                            <option value="10">Oktober</option><option value="11">November</option><option value="12" selected>Desember</option>
+                        </select>
+                        <input type="date" id="inTanggalTtd" oninput="generateTable(); saveState();" class="side-input">
+                        <div class="flex gap-1">
+                            <input type="number" id="inTglLibur" placeholder="Tgl" min="1" max="31" class="w-14 p-2 text-xs rounded bg-white text-black font-bold">
+                            <button onclick="addHoliday()" class="flex-1 bg-red-600 rounded text-[9px] font-bold">SET LIBUR</button>
+                            <button onclick="clearHolidays()" class="bg-slate-600 px-2 rounded text-[9px] font-bold"><i class="fas fa-undo"></i></button>
+                        </div>
+                        <div id="listLibur" class="text-[9px] mt-2 text-slate-400 italic"></div>
+                    </div>
+                </div>
+
+                <!-- Section 4 -->
+                <div class="acc-item" id="acc-ttd">
+                    <div class="acc-trigger" onclick="toggleAcc('acc-ttd')">
+                        <h3><i class="fas fa-signature mr-2"></i> Tanda Tangan</h3>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="acc-content">
+                        <select id="inStatusSekolah" onchange="toggleNIP(); generateTable();" class="side-input">
+                            <option value="Negeri">Negeri</option><option value="Swasta">Swasta</option>
+                        </select>
+                        <input type="text" id="inKepsek" oninput="generateTable();" placeholder="Nama Kepsek" class="side-input">
+                        <input type="text" id="inNipKepsek" oninput="generateTable();" placeholder="NIP Kepsek" class="nip-field side-input">
+                        <input type="text" id="inWali" oninput="generateTable();" placeholder="Nama Guru" class="side-input">
+                        <input type="text" id="inNipWali" oninput="generateTable();" placeholder="NIP Guru" class="nip-field side-input">
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN AREA -->
+        <main class="main-content">
+            <header class="top-nav-candy text-white p-3 no-print">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex-1 flex gap-2 w-full">
+                        <input type="text" id="inSearch" placeholder="Cari Kelas..." class="flex-1 p-2 rounded text-xs text-black font-bold">
+                        <button onclick="syncFromCSV()" class="bg-yellow-500 text-red-900 px-4 rounded font-bold text-xs uppercase">Sync</button>
+                        <input type="text" id="manNama" onkeypress="if(event.key === 'Enter') tambahNama()" placeholder="+ Nama..." class="w-32 p-2 rounded text-xs text-black font-bold">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="autoFillAllHadir()" class="bg-emerald-600 px-4 py-2 rounded-xl font-bold text-[10px]">AUTO HADIR</button>
+                        <button onclick="manualSave()" class="bg-blue-600 px-4 py-2 rounded-xl font-bold text-[10px]">SIMPAN</button>
+                        <button onclick="window.print()" class="bg-white text-red-700 px-6 py-2 rounded-xl font-black text-[10px] shadow-lg">CETAK PDF</button>
+                    </div>
+                </div>
+            </header>
+
+            <div id="previewArea" class="preview-wrapper"></div>
+        </main>
+    </div>
+
+    <script>
+        let fullDatabase = [];
+        let currentSiswa = [];
+        let attendanceData = {}; 
+        let manualRekap = {};
+        let customHolidays = [];
+        let contextTarget = null;
+
+        function toggleAcc(id) {
+            const item = document.getElementById(id);
+            const content = item.querySelector('.acc-content');
+            const isActive = content.classList.contains('active');
+            document.querySelectorAll('.acc-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+            if (!isActive) { content.classList.add('active'); item.classList.add('open'); }
+        }
+
+        // FUNGSI UNDUH TEMPLATE EXCEL ASLI (.xlsx)
+        function downloadTemplate() {
+            const data = [
+                ["Nama_Siswa", "NISN", "Kelas", "Nama_Sekolah"],
+                ["CONTOH NAMA SISWA 1", "12345678", "1 A", "SD NEGERI CONTOH"],
+                ["CONTOH NAMA SISWA 2", "87654321", "1 A", "SD NEGERI CONTOH"]
+            ];
+            const worksheet = XLSX.utils.aoa_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Data_Siswa");
+            
+            // Generate File Excel
+            XLSX.writeFile(workbook, "template_sigap_siswa.xlsx");
+        }
+
+        function generateTable() {
+            const container = document.getElementById('previewArea');
+            container.innerHTML = '';
+            const bulan = parseInt(document.getElementById('selBulan').value);
+            const jmlHari = new Date(2026, bulan, 0).getDate();
+            const chunkSize = 20;
+
+            if (currentSiswa.length === 0) {
+                container.innerHTML = `<div class="print-container flex items-center justify-center text-slate-300 font-bold">BELUM ADA DATA SISWA</div>`;
+                return;
+            }
+
+            for (let i = 0; i < currentSiswa.length; i += chunkSize) {
+                const chunk = currentSiswa.slice(i, i + chunkSize);
+                const isLastPage = (i + chunkSize >= currentSiswa.length);
+                const page = document.createElement('div');
+                page.className = 'print-container';
+                
+                let html = `
+                <div class="text-center mb-4">
+                    <h2 style="font-size: 11pt; font-weight: bold; margin: 0;">DAFTAR HADIR PESERTA DIDIK</h2>
+                    <h2 style="font-size: 14pt; font-weight: bold; text-transform: uppercase; margin: 0;">${document.getElementById('inLembaga').value || 'NAMA SEKOLAH'}</h2>
+                    <div class="flex justify-center gap-12 mt-2 font-bold" style="font-size: 9.5pt;">
+                        <p>KELAS: ${document.getElementById('inKelas').value || '-'}</p>
+                        <p>BULAN: ${document.getElementById('selBulan').options[document.getElementById('selBulan').selectedIndex].text.toUpperCase()} 2026</p>
+                    </div>
+                </div>
+                <table class="table-absen">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="width:7mm">NO</th>
+                            <th rowspan="2" style="width:20mm">NISN</th>
+                            <th rowspan="2" style="width:55mm">NAMA LENGKAP SISWA</th>
+                            <th colspan="${jmlHari}">TANGGAL</th>
+                            <th colspan="4" style="width:28mm">KET</th>
+                            <th rowspan="2" class="no-print" style="width:10mm">#</th>
+                        </tr>
+                        <tr>`;
+                
+                for(let d=1; d<=jmlHari; d++) {
+                    const dayOfWeek = new Date(2026, bulan-1, d).getDay();
+                    let cls = (dayOfWeek===0)?'sunday':(dayOfWeek===6)?'saturday':(customHolidays.includes(d)?'holiday':'');
+                    html += `<th class="${cls}" style="width:6.5mm">${d}</th>`;
+                }
+                html += `<th class="rekap-col">H</th><th class="rekap-col">S</th><th class="rekap-col">I</th><th class="rekap-col">A</th></tr></thead><tbody>`;
+
+                chunk.forEach((s, idx) => {
+                    const globalIdx = i + idx;
+                    let rekap = { H:0, S:0, I:0, A:0 };
+                    html += `<tr>
+                        <td class="font-bold">${globalIdx+1}</td>
+                        <td class="text-center font-mono text-[7pt]">${s.nisn || '-'}</td>
+                        <td class="text-left px-2 uppercase font-bold text-[7.5pt]">${s.nama}</td>`;
+                    for(let d=1; d<=jmlHari; d++) {
+                        const dayOfWeek = new Date(2026, bulan-1, d).getDay();
+                        const isHol = (dayOfWeek===0 || dayOfWeek===6 || customHolidays.includes(d));
+                        if(isHol) {
+                            let cls = (dayOfWeek===0)?'sunday':(dayOfWeek===6)?'saturday':'holiday';
+                            html += `<td class="${cls}"></td>`;
+                        } else {
+                            const val = attendanceData[`${s.nama}-${d}`] || "";
+                            if(val) rekap[val]++;
+                            html += `<td onclick="toggleAbsen(this, '${s.nama}', ${d})" oncontextmenu="openContextMenu(event, this, '${s.nama}', ${d})" class="cell-${val}">${val}</td>`;
+                        }
+                    }
+                    const mS = (manualRekap[s.nama]?.S) || (rekap.S || '');
+                    const mI = (manualRekap[s.nama]?.I) || (rekap.I || '');
+                    const mA = (manualRekap[s.nama]?.A) || (rekap.A || '');
+                    html += `<td class="rekap-col">${rekap.H || ''}</td>
+                        <td class="rekap-col"><input type="text" class="input-manual-rekap" value="${mS}" onchange="updateManualRekap('${s.nama}', 'S', this.value)"></td>
+                        <td class="rekap-col"><input type="text" class="input-manual-rekap" value="${mI}" onchange="updateManualRekap('${s.nama}', 'I', this.value)"></td>
+                        <td class="rekap-col"><input type="text" class="input-manual-rekap" value="${mA}" onchange="updateManualRekap('${s.nama}', 'A', this.value)"></td>
+                        <td class="no-print"><button onclick="hapusSiswa(${globalIdx})" class="text-red-500"><i class="fas fa-trash-alt text-[9px]"></i></button></td></tr>`;
+                });
+
+                html += `</tbody></table>`;
+
+                if (isLastPage) {
+                    const tgl = document.getElementById('inTanggalTtd').value;
+                    const tglFormat = tgl ? "Bekasi, " + new Date(tgl).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) : "Bekasi, ..........................";
+                    const isNegeri = document.getElementById('inStatusSekolah').value === 'Negeri';
+                    html += `
+                    <div class="flex justify-between mt-6 px-10" style="font-size: 9.5pt;">
+                        <div class="text-center min-w-[80mm]">
+                            <p>Mengetahui,</p><p>Kepala Sekolah</p>
+                            <div style="height: 18mm;"></div>
+                            <p class="font-bold underline uppercase">${document.getElementById('inKepsek').value || '.........................'}</p>
+                            <p class="text-[8.5pt]">${isNegeri ? 'NIP. '+(document.getElementById('inNipKepsek').value || '...................') : ''}</p>
+                        </div>
+                        <div class="text-center min-w-[80mm]">
+                            <p>${tglFormat}</p><p>Guru Kelas,</p>
+                            <div style="height: 18mm;"></div>
+                            <p class="font-bold underline uppercase">${document.getElementById('inWali').value || '.........................'}</p>
+                            <p class="text-[8.5pt]">${isNegeri ? 'NIP. '+(document.getElementById('inNipWali').value || '...................') : ''}</p>
+                        </div>
+                    </div>`;
+                }
+                page.innerHTML = html;
+                container.appendChild(page);
+            }
+        }
+
+        function syncFromCSV() {
+            const query = document.getElementById('inSearch').value.trim().toUpperCase();
+            if(!query || !fullDatabase.length) return alert("Upload Database (Excel/CSV) dulu!");
+            const f = fullDatabase.filter(r => {
+                const vk = (r.Kelas || r.KELAS || r.Rombel || "").toString().toUpperCase();
+                return vk === query || vk.includes(query);
+            });
+            if(f.length) {
+                document.getElementById('inLembaga').value = f[0].Nama_Sekolah || f[0].Sekolah || "";
+                currentSiswa = f.map(x => ({ nama: (x.Nama_Siswa || x.Nama || "NONAME").toUpperCase(), nisn: (x.NISN || "-") }));
+                currentSiswa.sort((a,b)=>a.nama.localeCompare(b.nama));
+                generateTable(); saveState();
+            } else { alert("Kelas tidak ditemukan!"); }
+        }
+
+        // LISTENER UNTUK IMPORT (BISA CSV MAUPUN EXCEL)
+        document.getElementById('csvFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileName = file.name.toLowerCase();
+
+            if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const bstr = evt.target.result;
+                    const wb = XLSX.read(bstr, { type: 'binary' });
+                    const wsname = wb.SheetNames[0];
+                    const ws = wb.Sheets[wsname];
+                    fullDatabase = XLSX.utils.sheet_to_json(ws);
+                    alert("Database Excel berhasil dimuat!");
+                    saveState();
+                };
+                reader.readAsBinaryString(file);
+            } else {
+                Papa.parse(file, { header: true, skipEmptyLines: true, complete: function(r) { fullDatabase = r.data; alert("Database CSV berhasil dimuat!"); saveState(); } });
+            }
+        });
+
+        // --- Logika Pendukung Dipertahankan ---
+        function toggleAbsen(cell, n, t) { const s = ["", "H", "S", "I", "A"]; let v = attendanceData[`${n}-${t}`] || ""; attendanceData[`${n}-${t}`] = s[(s.indexOf(v)+1)%s.length]; generateTable(); saveState(); }
+        function openContextMenu(e, c, n, t) { e.preventDefault(); contextTarget = { n, t }; const m = document.getElementById('customContextMenu'); m.style.display='block'; m.style.left=e.pageX+'px'; m.style.top=e.pageY+'px'; }
+        function setAbsenManual(v) { if(contextTarget) { attendanceData[`${contextTarget.n}-${contextTarget.t}`] = v; generateTable(); saveState(); } closeContextMenu(); }
+        function closeContextMenu() { document.getElementById('customContextMenu').style.display='none'; }
+        function addHoliday() { const t = parseInt(document.getElementById('inTglLibur').value); if(t>=1 && t<=31 && !customHolidays.includes(t)) { customHolidays.push(t); customHolidays.sort((a,b)=>a-b); updateHolidayList(); generateTable(); saveState(); } }
+        function clearHolidays() { customHolidays = []; updateHolidayList(); generateTable(); saveState(); }
+        function updateHolidayList() { document.getElementById('listLibur').innerText = customHolidays.length ? "Libur: " + customHolidays.join(",") : ""; }
+        function updateKelasList() { const j = document.getElementById('selJenjang').value; const s = document.getElementById('selKelasList'); s.innerHTML = '<option value="">- Pilih -</option>'; let o = (j==="SD") ? ["1 A", "1 B", "2 A", "2 B", "3", "4", "5", "6"] : ["Kelompok A", "Kelompok B"]; o.forEach(x => { let el = document.createElement("option"); el.value=x; el.textContent=x; s.appendChild(el); }); }
+        function applyKelasMenu() { const k = document.getElementById('selKelasList').value; if(k) { document.getElementById('inKelas').value=k; document.getElementById('inSearch').value=k; syncFromCSV(); } }
+        function autoFillAllHadir() { if(!currentSiswa.length) return; if(confirm("Isi H semua?")) { const b = parseInt(document.getElementById('selBulan').value); const j = new Date(2026, b, 0).getDate(); currentSiswa.forEach(s => { for(let d=1; d<=j; d++) { const day = new Date(2026, b-1, d).getDay(); if(day!==0 && day!==6 && !customHolidays.includes(d) && !attendanceData[`${s.nama}-${d}`]) attendanceData[`${s.nama}-${d}`] = "H"; } }); generateTable(); saveState(); } }
+        function updateManualRekap(n, t, v) { if(!manualRekap[n]) manualRekap[n]={}; manualRekap[n][t]=v; saveState(); }
+        function tambahNama() { const n = document.getElementById('manNama').value.toUpperCase().trim(); if(n) { currentSiswa.push({nama:n, nisn:""}); currentSiswa.sort((a,b)=>a.nama.localeCompare(b.nama)); document.getElementById('manNama').value=''; generateTable(); saveState(); } }
+        function hapusSiswa(i) { if(confirm("Hapus?")) { currentSiswa.splice(i,1); generateTable(); saveState(); } }
+        function clearAttendance() { if(confirm("Reset Absen?")) { attendanceData={}; manualRekap={}; generateTable(); saveState(); } }
+        function manualSave() { saveState(); alert("✅ Tersimpan!"); }
+        function toggleNIP() { const s = document.getElementById('inStatusSekolah').value; document.querySelectorAll('.nip-field').forEach(x => x.style.display = (s==='Negeri'?'block':'none')); }
+
+        function saveState() {
+            const state = {
+                search: document.getElementById('inSearch').value, lembaga: document.getElementById('inLembaga').value,
+                kelas: document.getElementById('inKelas').value, tglTtd: document.getElementById('inTanggalTtd').value,
+                bulan: document.getElementById('selBulan').value, kepsek: document.getElementById('inKepsek').value,
+                nipKepsek: document.getElementById('inNipKepsek').value, wali: document.getElementById('inWali').value,
+                nipWali: document.getElementById('inNipWali').value, status: document.getElementById('inStatusSekolah').value,
+                jenjang: document.getElementById('selJenjang').value, siswa: currentSiswa, att: attendanceData, 
+                rekap: manualRekap, hol: customHolidays, db: fullDatabase
+            };
+            localStorage.setItem('sigapSiswaState', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const s = JSON.parse(localStorage.getItem('sigapSiswaState'));
+            if(s) {
+                document.getElementById('inSearch').value = s.search || "";
+                document.getElementById('inLembaga').value = s.lembaga || "";
+                document.getElementById('inKelas').value = s.kelas || "";
+                document.getElementById('inTanggalTtd').value = s.tglTtd || "";
+                document.getElementById('selBulan').value = s.bulan || "12";
+                document.getElementById('inKepsek').value = s.kepsek || "";
+                document.getElementById('inNipKepsek').value = s.nipKepsek || "";
+                document.getElementById('inWali').value = s.wali || "";
+                document.getElementById('inNipWali').value = s.nipWali || "";
+                document.getElementById('inStatusSekolah').value = s.status || "Negeri";
+                document.getElementById('selJenjang').value = s.jenjang || "SD";
+                currentSiswa = s.siswa || []; attendanceData = s.att || {}; manualRekap = s.rekap || {};
+                customHolidays = s.hol || []; fullDatabase = s.db || [];
+                updateKelasList(); toggleNIP(); updateHolidayList(); generateTable();
+            } else { updateKelasList(); }
+        }
+
+        window.onload = loadState;
+    </script>
+</body>
+</html>
