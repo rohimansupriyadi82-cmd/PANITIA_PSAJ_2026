@@ -14,6 +14,8 @@
             /* Warna Ikon */
             --c1: #00d2ff; --c2: #00ff87; --c3: #ff007a;
             --c4: #f6d365; --c5: #a18cd1; --c6: #00f2fe; --c7: #ffa502;
+            /* Tambahan 3 Warna Baru */
+            --c8: #ff6b81; --c9: #7bed9f; --c10: #70a1ff; 
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,7 +23,6 @@
         body, html {
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            /* TEMBOKNYA SUDAH DIHANCURKAN DAN DIJADIKAN TRANSPARAN */
             background: transparent; 
             color: #fff;
             overflow: hidden;
@@ -104,6 +105,8 @@
         .c1 i { color: var(--c1); } .c2 i { color: var(--c2); }
         .c3 i { color: var(--c3); } .c4 i { color: var(--c4); }
         .c5 i { color: var(--c5); } .c6 i { color: var(--c6); } .c7 i { color: var(--c7); }
+        /* Kelas warna baru */
+        .c8 i { color: var(--c8); } .c9 i { color: var(--c9); } .c10 i { color: var(--c10); }
 
         #app-view {
             position: fixed; top: 75px; left: 0; width: 100%; height: calc(100vh - 75px);
@@ -167,7 +170,7 @@
                 <i class="fa-solid fa-address-card"></i>
                 <span>Cetak Kartu</span>
             </div>
-            <div class="card c5" onclick="bukaHalaman('https://imanschool.my.id/aplikasi-nilai/#/login')">
+            <div class="card c5" onclick="window.open('https://imanschool.my.id/aplikasi-nilai/#/login', '_blank')">
                 <i class="fa-solid fa-database"></i>
                 <span>Data Nilai</span>
             </div>
@@ -178,6 +181,19 @@
             <div class="card c7" onclick="bukaHalaman('app-meja-v2.html')">
                 <i class="fa-solid fa-table-cells"></i>
                 <span>Meja (V2)</span>
+            </div>
+
+            <div class="card c8" onclick="bukaHalaman('tanda-terima-honor.html')">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span>Terima Honor</span>
+            </div>
+            <div class="card c9" onclick="bukaHalaman('absen.html')">
+                <i class="fa-solid fa-clipboard-user"></i>
+                <span>Absen Panitia</span>
+            </div>
+            <div class="card c10" onclick="bukaHalaman('absen_murid.html')">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>Absen Siswa</span>
             </div>
         </div>
     </main>
