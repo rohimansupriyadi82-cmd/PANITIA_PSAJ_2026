@@ -11,9 +11,10 @@
             --bg: #010a10;
             --primary: #64ffda;
             --card-bg: rgba(255, 255, 255, 0.07);
+            /* Variabel Warna Ikon */
             --c1: #00d2ff; --c2: #00ff87; --c3: #ff007a;
             --c4: #f6d365; --c5: #a18cd1; --c6: #00f2fe; --c7: #ffa502;
-            --c8: #ff6b81; --c9: #7bed9f; --c10: #70a1ff; 
+            --c8: #ff6b81; --c9: #7bed9f; --c10: #70a1ff; --c11: #ff9f43;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,34 +53,37 @@
         .brand-text span { color: var(--primary); font-size: 10px; font-weight: 800; text-transform: uppercase; }
 
         #homeBtn {
-            background: var(--primary); color: #000;
+            background: #ff4757; color: #fff;
             border: none; padding: 10px 18px; border-radius: 10px;
             font-weight: 800; font-size: 12px; cursor: pointer;
-            display: none; box-shadow: 0 0 15px rgba(100, 255, 218, 0.5);
+            display: none; box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+            transition: 0.3s;
         }
+        #homeBtn:hover { background: #ff6b81; transform: scale(1.05); }
 
         #dashboard-view {
             margin-top: 75px; height: calc(100vh - 75px);
-            width: 100%; padding: 40px 20px;
+            width: 100%; padding: 30px 20px;
             overflow-y: auto; display: flex; flex-direction: column; align-items: center;
         }
 
-        /* Animasi Text Welcome (Turun Lembut) */
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .welcome-text { text-align: center; margin-bottom: 35px; animation: fadeInDown 0.8s ease-out forwards; }
+        .welcome-text { text-align: center; margin-bottom: 30px; animation: fadeInDown 0.8s ease-out forwards; }
         .welcome-text h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .welcome-text p { color: var(--primary); font-size: 14px; font-weight: 600; text-shadow: 0 1px 5px rgba(0,0,0,0.5); }
 
-        /* PERUBAHAN KE FLEXBOX AGAR RATA TENGAH (TIDAK KAKU KIRI) */
         .grid {
-            display: flex; flex-wrap: wrap; justify-content: center;
-            gap: 15px; width: 100%; max-width: 900px;
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 15px; 
+            width: 100%; 
+            max-width: 1000px;
+            padding-bottom: 40px;
         }
 
-        /* Animasi Card (Muncul Dari Bawah) */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
@@ -92,45 +96,38 @@
             border-radius: 20px; padding: 25px 10px;
             text-align: center; cursor: pointer; 
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-            width: calc(25% - 15px); /* Menyesuaikan Lebar Otomatis */
-            min-width: 130px; max-width: 160px;
-            
-            /* Terapkan Animasi */
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 12px;
             opacity: 0; 
             animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         
-        /* Efek Saat Disentuh / Hover */
         .card:hover { 
-            transform: translateY(-8px) scale(1.02); /* Sedikit membesar */
+            transform: translateY(-8px) scale(1.02);
             background: rgba(100, 255, 218, 0.12); 
             border-color: var(--primary);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 255, 218, 0.2);
         }
         
-        /* Efek Ikon Goyang Saat Hover */
         .card i { 
             font-size: 32px; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); 
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .card:hover i {
-            transform: scale(1.2) rotate(5deg); /* Ikon membesar & miring dikit */
-        }
+        .card:hover i { transform: scale(1.2) rotate(5deg); }
 
-        .card span { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
+        .card span { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
 
-        /* Setel Delay Muncul Satu per Satu (Staggered Animation) */
         .c1 { animation-delay: 0.1s; } .c1 i { color: var(--c1); }
-        .c2 { animation-delay: 0.2s; } .c2 i { color: var(--c2); }
-        .c3 { animation-delay: 0.3s; } .c3 i { color: var(--c3); }
-        .c4 { animation-delay: 0.4s; } .c4 i { color: var(--c4); }
-        .c5 { animation-delay: 0.5s; } .c5 i { color: var(--c5); }
-        .c6 { animation-delay: 0.6s; } .c6 i { color: var(--c6); }
-        .c7 { animation-delay: 0.7s; } .c7 i { color: var(--c7); }
-        .c8 { animation-delay: 0.8s; } .c8 i { color: var(--c8); }
-        .c9 { animation-delay: 0.9s; } .c9 i { color: var(--c9); }
-        .c10{ animation-delay: 1.0s; } .c10 i { color: var(--c10); }
+        .c2 { animation-delay: 0.15s; } .c2 i { color: var(--c2); }
+        .c3 { animation-delay: 0.2s; } .c3 i { color: var(--c3); }
+        .c4 { animation-delay: 0.25s; } .c4 i { color: var(--c4); }
+        .c5 { animation-delay: 0.3s; } .c5 i { color: var(--c5); }
+        .c6 { animation-delay: 0.35s; } .c6 i { color: var(--c6); }
+        .c7 { animation-delay: 0.4s; } .c7 i { color: var(--c7); }
+        .c8 { animation-delay: 0.45s; } .c8 i { color: var(--c8); }
+        .c9 { animation-delay: 0.5s; } .c9 i { color: var(--c9); }
+        .c10{ animation-delay: 0.55s; } .c10 i { color: var(--c10); }
+        .c11{ animation-delay: 0.6s; } .c11 i { color: var(--c11); }
 
         #app-view {
             position: fixed; top: 75px; left: 0; width: 100%; height: calc(100vh - 75px);
@@ -143,9 +140,14 @@
             background: var(--primary); z-index: 1000000; transition: 0.3s;
         }
 
-        @media (max-width: 600px) {
-            .card { width: calc(50% - 15px); } /* 2 kolom di HP */
-            .welcome-text h1 { font-size: 24px; }
+        @media (max-width: 480px) {
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .card { padding: 20px 5px; }
+            .card i { font-size: 28px; }
+            .card span { font-size: 9px; }
+            .welcome-text h1 { font-size: 22px; }
+            .brand-text b { font-size: 13px; }
+            #homeBtn { padding: 8px 12px; font-size: 10px; }
         }
     </style>
 </head>
@@ -159,15 +161,15 @@
     <div id="loader"></div>
 
     <header>
-        <div class="brand" onclick="window.location.reload()">
+        <div class="brand" onclick="tutupHalaman()">
             <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
             <div class="brand-text">
                 <b>ROHIMAN SUPRIYADI</b>
                 <span>Panitia PSAJ 2026</span>
             </div>
         </div>
-        <button id="homeBtn" onclick="window.location.reload()">
-            <i class="fa-solid fa-house"></i> DASHBOARD
+        <button id="homeBtn" onclick="tutupHalaman()">
+            <i class="fa-solid fa-arrow-left"></i> KEMBALI
         </button>
     </header>
 
@@ -192,7 +194,7 @@
             </div>
             <div class="card c4" onclick="bukaHalaman('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/')">
                 <i class="fa-solid fa-address-card"></i>
-                <span>Cetak Kartu</span>
+                <span>Kartu Ujian</span>
             </div>
             <div class="card c5" onclick="window.open('https://imanschool.my.id/aplikasi-nilai/#/login', '_blank')">
                 <i class="fa-solid fa-database"></i>
@@ -212,11 +214,15 @@
             </div>
             <div class="card c9" onclick="bukaHalaman('absen.html')">
                 <i class="fa-solid fa-clipboard-user"></i>
-                <span>Absen Panitia</span>
+                <span>Absen Guru</span>
             </div>
             <div class="card c10" onclick="bukaHalaman('absen_murid.html')">
                 <i class="fa-solid fa-clipboard-list"></i>
                 <span>Absen Siswa</span>
+            </div>
+            <div class="card c11" onclick="window.open('https://rohimansupriyadi82-cmd.github.io/Kartu_MPLS_2026/', '_blank')">
+                <i class="fa-solid fa-id-badge"></i>
+                <span>Kartu MPLS</span>
             </div>
         </div>
     </main>
@@ -233,7 +239,8 @@
 
         function bukaHalaman(url) {
             loader.style.width = '40%';
-            frame.src = url;
+            
+            // Pasang pendeteksi selesai loading
             frame.onload = function() {
                 loader.style.width = '100%';
                 setTimeout(() => {
@@ -242,6 +249,17 @@
                     homeBtn.style.display = 'block'; 
                 }, 300);
             };
+            
+            frame.src = url; // Panggil aplikasinya
+        }
+
+        function tutupHalaman() {
+            // INI KUNCI PERBAIKANNYA: Matikan deteksi loading agar tidak muncul ulang
+            frame.onload = null; 
+            
+            appLayar.style.display = 'none'; // Sembunyikan layar
+            homeBtn.style.display = 'none';  // Sembunyikan tombol
+            frame.src = 'about:blank';       // Kosongkan memori dengan aman
         }
 
         function updateJam() {
