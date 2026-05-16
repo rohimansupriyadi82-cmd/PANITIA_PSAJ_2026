@@ -19,98 +19,93 @@
         body, html {
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: transparent; /* Transparan agar video terlihat jelas */
+            background-color: transparent; 
             color: #fff; overflow-x: hidden;
         }
 
-        /* 1. PERBAIKAN: VIDEO ASLI TANPA PENGHALANG GELAP */
+        /* VIDEO ASLI CERAH & JERNIH */
         .video-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: -10;
-            filter: none; /* Menghilangkan filter apapun */
         }
 
-        /* Menghapus total bayangan gelap di seluruh layar */
-        .no-overlay {
+        /* Spotlight dibuat transparan agar tidak menggelapkan video */
+        .spotlight {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: transparent;
-            z-index: -5;
+            z-index: -5; pointer-events: none;
         }
 
         header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
             background: rgba(1, 10, 16, 0.7); backdrop-filter: blur(15px);
             border-bottom: 2px solid var(--primary);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 30px; z-index: 1000;
         }
 
-        .brand { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .brand img { height: 45px; }
-        .brand-text b { font-size: 18px; display: block; color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
-        .brand-text span { color: var(--primary); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .brand img { height: 35px; }
+        .brand-text b { font-size: 16px; display: block; color: #fff; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .brand-text span { color: var(--primary); font-size: 10px; font-weight: 800; text-transform: uppercase; }
 
         #dashboard-view {
-            padding-top: 100px; min-height: 100vh;
+            padding-top: 90px; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
-            perspective: 1200px; /* Efek kedalaman 3D */
         }
 
-        /* TULISAN DIBUAT SANGAT JELAS DENGAN SHADOW */
-        .welcome-text { text-align: center; margin-bottom: 40px; }
+        .welcome-text { text-align: center; margin-bottom: 30px; }
         .welcome-text h1 { 
-            font-size: 36px; font-weight: 800; 
-            text-shadow: 3px 3px 15px rgba(0,0,0,1);
-            margin-bottom: 10px;
+            font-size: 28px; font-weight: 800; 
+            text-shadow: 2px 2px 15px rgba(0,0,0,1);
+            margin-bottom: 8px;
         }
         .welcome-text p { 
-            background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 50px;
-            backdrop-filter: blur(8px); border: 1px solid var(--primary);
-            color: var(--primary); font-weight: 700;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.5); padding: 6px 20px; border-radius: 50px;
+            backdrop-filter: blur(10px); border: 1px solid var(--primary);
+            color: var(--primary); font-weight: 700; font-size: 13px;
         }
 
-        /* BENTO HONEYCOMB GRID */
+        /* GRID CONTAINER UNTUK MENU LEBIH KECIL */
         .grid-container {
-            display: flex; justify-content: center; width: 100%; max-width: 1100px; padding: 20px;
+            display: flex; justify-content: center; width: 100%; max-width: 950px; padding: 10px;
         }
 
         .honeycomb-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(6, 1fr); /* Ditambah kolom agar card mengecil */
+            gap: 12px;
             width: 100%;
         }
 
-        /* KARTU MENU MELAYANG & TRANSPARAN JERNIH */
+        /* KARTU MENU LEBIH KECIL & RAPI */
         .card {
-            background: rgba(1, 10, 16, 0.4); /* Sangat tipis agar video tembus */
+            background: rgba(1, 10, 16, 0.4); 
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 30px 15px;
+            border-radius: 18px;
+            padding: 18px 10px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 15px; cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            gap: 10px; cursor: pointer;
+            transition: all 0.3s ease;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        /* Variasi Ukuran */
+        /* Ukuran khusus untuk Bento Style */
         .card.main { grid-column: span 2; grid-row: span 2; background: rgba(1, 10, 16, 0.6); }
         .card.wide { grid-column: span 2; }
 
         .card:hover {
-            transform: scale(1.05) translateY(-10px);
+            transform: translateY(-5px);
             background: rgba(1, 10, 16, 0.8);
             border-color: var(--glow-color);
-            box-shadow: 0 15px 45px rgba(0,0,0,0.5), 0 0 20px var(--glow-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px var(--glow-color);
         }
 
-        .card i { font-size: 40px; filter: drop-shadow(0 0 10px var(--glow-color)); transition: 0.4s; }
-        .card span { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .card i { font-size: 28px; filter: drop-shadow(0 0 8px var(--glow-color)); transition: 0.3s; }
+        .card span { font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
 
-        /* GLOW COLORS */
+        /* WARNA IKON */
         .c1 { --glow-color: var(--c1); } .c1 i { color: var(--c1); }
         .c2 { --glow-color: var(--c2); } .c2 i { color: var(--c2); }
         .c3 { --glow-color: var(--c3); } .c3 i { color: var(--c3); }
@@ -124,36 +119,36 @@
         .c11{ --glow-color: var(--c11); } .c11 i { color: var(--c11); }
 
         #homeBtn {
-            background: #ff4757; color: #fff; border: none; padding: 12px 25px;
+            background: #ff4757; color: #fff; border: none; padding: 10px 20px;
             border-radius: 50px; font-weight: 800; cursor: pointer; display: none;
-            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.4);
+            font-size: 11px;
         }
 
         #app-view {
-            position: fixed; top: 80px; left: 0; width: 100%; height: calc(100vh - 80px);
+            position: fixed; top: 70px; left: 0; width: 100%; height: calc(100vh - 70px);
             background: #fff; display: none; z-index: 9999;
         }
         iframe { width: 100%; height: 100%; border: none; }
 
         #loader {
-            position: fixed; top: 0; left: 0; height: 4px; width: 0;
+            position: fixed; top: 0; left: 0; height: 3px; width: 0;
             background: var(--primary); z-index: 10000; transition: 0.3s;
         }
 
-        @media (max-width: 900px) {
-            .honeycomb-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 768px) {
+            .honeycomb-grid { grid-template-columns: repeat(3, 1fr); }
             .card.main { grid-column: span 2; }
-            .welcome-text h1 { font-size: 26px; }
+            .welcome-text h1 { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- VIDEO BACKGROUND ASLI & CERAH -->
     <video class="video-bg" autoplay loop muted playsinline>
         <source src="gedung.mp4" type="video/mp4">
     </video>
     
+    <div class="spotlight" id="spotlight"></div>
     <div id="loader"></div>
 
     <header>
@@ -177,67 +172,46 @@
 
         <div class="grid-container">
             <div class="honeycomb-grid">
-                <!-- MENU 1: ALBUM (UTAMA - BESAR) -->
                 <div class="card c1 main" onclick="bukaHalaman('app-album.html')">
                     <i class="fa-solid fa-images"></i>
                     <span>ALBUM PSAJ</span>
                 </div>
-
-                <!-- MENU 2: LJK -->
                 <div class="card c2" onclick="bukaHalaman('app-ljk.html')">
                     <i class="fa-solid fa-file-signature"></i>
                     <span>LJK SISWA</span>
                 </div>
-
-                <!-- MENU 3: INSTRUMEN -->
                 <div class="card c3" onclick="bukaHalaman('app-monitoring.html')">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>INSTRUMEN</span>
                 </div>
-
-                <!-- MENU 4: KARTU UJIAN (WIDE) -->
                 <div class="card c4 wide" onclick="bukaHalaman('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/')">
                     <i class="fa-solid fa-address-card"></i>
                     <span>KARTU UJIAN</span>
                 </div>
-
-                <!-- MENU 5: OLAH NILAI -->
                 <div class="card c5" onclick="window.open('https://imanschool.my.id/aplikasi-nilai/#/login', '_blank')">
                     <i class="fa-solid fa-database"></i>
                     <span>OLAH NILAI</span>
                 </div>
-
-                <!-- MENU 6: MEJA V1 -->
                 <div class="card c6" onclick="bukaHalaman('app-nomor-meja.html')">
                     <i class="fa-solid fa-table-list"></i>
                     <span>MEJA (V1)</span>
                 </div>
-
-                <!-- MENU 7: MEJA V2 -->
                 <div class="card c7" onclick="bukaHalaman('app-meja-v2.html')">
                     <i class="fa-solid fa-table-cells"></i>
                     <span>MEJA (V2)</span>
                 </div>
-
-                <!-- MENU 8: HONOR (BESAR) -->
                 <div class="card c8 main" onclick="bukaHalaman('tanda terima honor.html')">
                     <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>TERIMA HONOR</span>
                 </div>
-
-                <!-- MENU 10: ABSEN SISWA -->
-                <div class="card c10" onclick="bukaHalaman('absen_murid.html')">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>ABSEN SISWA</span>
-                </div>
-
-                <!-- MENU 9: ABSEN GURU -->
                 <div class="card c9" onclick="bukaHalaman('absen.html')">
                     <i class="fa-solid fa-clipboard-user"></i>
                     <span>ABSEN GURU</span>
                 </div>
-
-                <!-- MENU 11: MPLS (WIDE) -->
+                <div class="card c10" onclick="bukaHalaman('absen_murid.html')">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>ABSEN SISWA</span>
+                </div>
                 <div class="card c11 wide" onclick="window.open('https://rohimansupriyadi82-cmd.github.io/Kartu_MPLS_2026/', '_blank')">
                     <i class="fa-solid fa-id-badge"></i>
                     <span>KARTU MPLS</span>
