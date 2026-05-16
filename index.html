@@ -12,6 +12,7 @@
             --c1: #00d2ff; --c2: #00ff87; --c3: #ff007a;
             --c4: #f6d365; --c5: #a18cd1; --c6: #00f2fe; --c7: #ffa502;
             --c8: #ff6b81; --c9: #7bed9f; --c10: #70a1ff; --c11: #ff9f43;
+            --c12: #ff4757;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,17 +24,17 @@
             color: #fff; overflow-x: hidden;
         }
 
-        /* VIDEO ASLI CERAH & JERNIH */
+        /* 1. VIDEO ASLI CERAH & JERNIH - TANPA PENGHALANG GELAP */
         .video-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: -10;
         }
 
-        /* Spotlight dibuat transparan agar tidak menggelapkan video */
-        .spotlight {
+        /* Memastikan tidak ada overlay gelap sama sekali */
+        .overlay-none {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: transparent;
-            z-index: -5; pointer-events: none;
+            z-index: -5;
         }
 
         header {
@@ -66,32 +67,31 @@
             color: var(--primary); font-weight: 700; font-size: 13px;
         }
 
-        /* GRID CONTAINER UNTUK MENU LEBIH KECIL */
+        /* GRID CONTAINER MINIMALIS */
         .grid-container {
-            display: flex; justify-content: center; width: 100%; max-width: 950px; padding: 10px;
+            display: flex; justify-content: center; width: 100%; max-width: 1000px; padding: 10px;
         }
 
         .honeycomb-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr); /* Ditambah kolom agar card mengecil */
+            grid-template-columns: repeat(6, 1fr);
             gap: 12px;
             width: 100%;
         }
 
-        /* KARTU MENU LEBIH KECIL & RAPI */
+        /* KARTU MENU KECIL & RAPI */
         .card {
             background: rgba(1, 10, 16, 0.4); 
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             border-radius: 18px;
-            padding: 18px 10px;
+            padding: 20px 10px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 10px; cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
         }
 
-        /* Ukuran khusus untuk Bento Style */
         .card.main { grid-column: span 2; grid-row: span 2; background: rgba(1, 10, 16, 0.6); }
         .card.wide { grid-column: span 2; }
 
@@ -102,7 +102,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px var(--glow-color);
         }
 
-        .card i { font-size: 28px; filter: drop-shadow(0 0 8px var(--glow-color)); transition: 0.3s; }
+        .card i { font-size: 26px; filter: drop-shadow(0 0 8px var(--glow-color)); transition: 0.3s; }
         .card span { font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
 
         /* WARNA IKON */
@@ -117,6 +117,7 @@
         .c9 { --glow-color: var(--c9); } .c9 i { color: var(--c9); }
         .c10{ --glow-color: var(--c10); } .c10 i { color: var(--c10); }
         .c11{ --glow-color: var(--c11); } .c11 i { color: var(--c11); }
+        .c12{ --glow-color: var(--c12); } .c12 i { color: var(--c12); }
 
         #homeBtn {
             background: #ff4757; color: #fff; border: none; padding: 10px 20px;
@@ -144,11 +145,11 @@
 </head>
 <body>
 
+    <!-- VIDEO BACKGROUND ASLI CERAH -->
     <video class="video-bg" autoplay loop muted playsinline>
         <source src="gedung.mp4" type="video/mp4">
     </video>
     
-    <div class="spotlight" id="spotlight"></div>
     <div id="loader"></div>
 
     <header>
@@ -172,49 +173,76 @@
 
         <div class="grid-container">
             <div class="honeycomb-grid">
+                <!-- MENU 1 -->
                 <div class="card c1 main" onclick="bukaHalaman('app-album.html')">
                     <i class="fa-solid fa-images"></i>
                     <span>ALBUM PSAJ</span>
                 </div>
+
+                <!-- MENU 2 -->
                 <div class="card c2" onclick="bukaHalaman('app-ljk.html')">
                     <i class="fa-solid fa-file-signature"></i>
                     <span>LJK SISWA</span>
                 </div>
+
+                <!-- MENU 3 -->
                 <div class="card c3" onclick="bukaHalaman('app-monitoring.html')">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>INSTRUMEN</span>
                 </div>
+
+                <!-- MENU 4 -->
                 <div class="card c4 wide" onclick="bukaHalaman('https://rohimansupriyadi82-cmd.github.io/aplikasi-cetak-kartu/')">
                     <i class="fa-solid fa-address-card"></i>
                     <span>KARTU UJIAN</span>
                 </div>
+
+                <!-- MENU 5 -->
                 <div class="card c5" onclick="window.open('https://imanschool.my.id/aplikasi-nilai/#/login', '_blank')">
                     <i class="fa-solid fa-database"></i>
                     <span>OLAH NILAI</span>
                 </div>
+
+                <!-- MENU 6 -->
                 <div class="card c6" onclick="bukaHalaman('app-nomor-meja.html')">
                     <i class="fa-solid fa-table-list"></i>
                     <span>MEJA (V1)</span>
                 </div>
+
+                <!-- MENU 7 -->
                 <div class="card c7" onclick="bukaHalaman('app-meja-v2.html')">
                     <i class="fa-solid fa-table-cells"></i>
                     <span>MEJA (V2)</span>
                 </div>
+
+                <!-- MENU 8: HONOR (Link Diperbaiki) -->
                 <div class="card c8 main" onclick="bukaHalaman('tanda-terima-honor.html')">
                     <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>TERIMA HONOR</span>
                 </div>
+
+                <!-- MENU 9 -->
                 <div class="card c9" onclick="bukaHalaman('absen.html')">
                     <i class="fa-solid fa-clipboard-user"></i>
                     <span>ABSEN GURU</span>
                 </div>
+
+                <!-- MENU 10 -->
                 <div class="card c10" onclick="bukaHalaman('absen_murid.html')">
                     <i class="fa-solid fa-clipboard-list"></i>
                     <span>ABSEN SISWA</span>
                 </div>
+
+                <!-- MENU 11 -->
                 <div class="card c11 wide" onclick="window.open('https://rohimansupriyadi82-cmd.github.io/Kartu_MPLS_2026/', '_blank')">
                     <i class="fa-solid fa-id-badge"></i>
                     <span>KARTU MPLS</span>
+                </div>
+
+                <!-- MENU 12: SABER PUNGLI (MENU BARU) -->
+                <div class="card c12" onclick="window.open('https://rohimansupriyadi82-cmd.github.io/Saber_Pungli_2026/', '_blank')">
+                    <i class="fa-solid fa-shield-virus"></i>
+                    <span>SABER PUNGLI</span>
                 </div>
             </div>
         </div>
