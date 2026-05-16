@@ -22,12 +22,12 @@
         body, html {
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: transparent; /* Dibuat transparan agar video muncul */
+            background-color: transparent; 
             color: #fff;
             overflow: hidden;
         }
 
-        /* VIDEO TETAP CERAH & JERNIH */
+        /* VIDEO TAMPIL 100% ASLI, CERAH, TANPA FILTER */
         .video-bg {
             position: fixed; 
             top: 0; 
@@ -35,17 +35,18 @@
             width: 100vw; 
             height: 100vh;
             object-fit: cover; 
-            z-index: -10; /* Taruh di paling belakang */
+            z-index: -10; 
+            filter: none; /* Menghilangkan semua filter jika ada */
         }
 
-        /* OVERLAY SANGAT TIPIS AGAR VIDEO TIDAK GELAP */
+        /* OVERLAY DIHAPUS TOTAL (TRANSPARAN) AGAR TIDAK ADA SAMAR GELAP */
         .overlay {
             position: fixed; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%;
-            background: rgba(0, 0, 0, 0.2); /* Hanya sedikit bayangan agar video tetap jernih */
+            background: transparent; /* Sama sekali tidak ada lapisan warna gelap */
             z-index: -5;
         }
 
@@ -76,7 +77,7 @@
             overflow-y: auto; display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- PERBAIKAN TULISAN AGAR JELAS --- */
+        /* --- AGAR TULISAN TETAP JELAS DI VIDEO CERAH --- */
         .welcome-text { 
             text-align: center; 
             margin-bottom: 30px; 
@@ -87,22 +88,22 @@
             font-size: 28px; 
             font-weight: 800; 
             margin-bottom: 10px; 
-            /* Bayangan teks dipertebal agar terbaca meski video cerah */
-            text-shadow: 2px 2px 8px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.5); 
+            /* Memberikan shadow hitam kuat agar tulisan putih tidak hilang di video cerah */
+            text-shadow: 2px 2px 10px rgba(0,0,0,1); 
         }
 
         .welcome-text p { 
             color: var(--primary); 
             font-size: 14px; 
             font-weight: 700; 
-            /* Memberikan kotak transparan gelap di belakang Jam agar terbaca sangat jelas */
+            /* Menggunakan kotak transparan gelap tipis HANYA di area jam agar angka terbaca */
             background: rgba(0, 0, 0, 0.5);
-            padding: 8px 15px;
-            border-radius: 12px;
+            padding: 8px 20px;
+            border-radius: 50px;
             display: inline-block;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(100, 255, 218, 0.3);
-            text-shadow: 1px 1px 3px rgba(0,0,0,1);
+            text-shadow: 1px 1px 2px rgba(0,0,0,1);
         }
 
         .grid {
@@ -120,7 +121,7 @@
         }
 
         .card {
-            background: rgba(1, 10, 16, 0.65); /* Card sedikit gelap agar kontras */
+            background: rgba(1, 10, 16, 0.65); /* Card sedikit gelap agar kontras dengan video cerah */
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px; padding: 25px 10px;
@@ -173,11 +174,12 @@
 </head>
 <body>
 
-    <!-- Pastikan file gedung.mp4 tersedia di folder yang sama -->
+    <!-- VIDEO BACKGROUND ASLI & JERNIH -->
     <video class="video-bg" autoplay loop muted playsinline>
         <source src="gedung.mp4" type="video/mp4">
     </video>
     
+    <!-- OVERLAY DIBUAT TRANSPARAN TOTAL -->
     <div class="overlay"></div>
 
     <div id="loader"></div>
@@ -187,7 +189,7 @@
             <img src="https://freeimghost.com/images/2026/01/22/Kabupaten-Bekasi.md.png" alt="Logo">
             <div class="brand-text">
                 <b>ROHIMAN SUPRIYADI</b>
-                <span>KUMPULAN APLIKASI MANDIRI</span>
+                <span>Kumpulan Aplikasi Mandiri</span>
             </div>
         </div>
         <button id="homeBtn" onclick="tutupHalaman()">
