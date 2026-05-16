@@ -10,7 +10,7 @@
         :root {
             --bg: #010a10;
             --primary: #64ffda;
-            --card-bg: rgba(0, 0, 0, 0.4); /* Dibuat sedikit gelap agar teks terbaca di video cerah */
+            --card-bg: rgba(255, 255, 255, 0.07);
             /* Variabel Warna Ikon */
             --c1: #00d2ff; --c2: #00ff87; --c3: #ff007a;
             --c4: #f6d365; --c5: #a18cd1; --c6: #00f2fe; --c7: #ffa502;
@@ -22,37 +22,28 @@
         body, html {
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: transparent; /* KUNCI: Harus transparan agar video di belakangnya kelihatan */
+            background: #000; 
             color: #fff;
             overflow: hidden;
         }
 
-        /* PERBAIKAN VIDEO: Dibuat sangat cerah dan jernih */
         .video-bg {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh;
-            object-fit: cover; 
-            z-index: -10; /* Taruh paling belakang */
-            filter: brightness(1.2) contrast(1.1); /* Menambah kecerahan video asli */
+            position: fixed; top: 0; left: 0; 
+            width: 100vw; height: 100vh;
+            object-fit: cover; z-index: -2;
+            filter: brightness(1.1); /* Video tetap cerah */
         }
 
-        /* OVERLAY DIHAPUS/DIBENINGKAN TOTAL */
         .overlay {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: transparent; /* Tidak ada lagi lapisan gelap */
-            z-index: -5;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            /* Overlay sangat tipis agar video tetap jernih */
+            background: rgba(0, 0, 0, 0.2); 
+            z-index: -1;
         }
 
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
-            background: rgba(1, 10, 16, 0.8); backdrop-filter: blur(15px);
+            background: rgba(1, 10, 16, 0.85); backdrop-filter: blur(15px);
             border-bottom: 2px solid var(--primary);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; z-index: 999999;
@@ -70,7 +61,6 @@
             display: none; box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
             transition: 0.3s;
         }
-        #homeBtn:hover { background: #ff6b81; transform: scale(1.05); }
 
         #dashboard-view {
             margin-top: 75px; height: calc(100vh - 75px);
@@ -78,14 +68,36 @@
             overflow-y: auto; display: flex; flex-direction: column; align-items: center;
         }
 
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- SOLUSI AGAR TULISAN JELAS --- */
+        .welcome-text { 
+            text-align: center; 
+            margin-bottom: 35px; 
+            animation: fadeInDown 0.8s ease-out forwards; 
         }
-        .welcome-text { text-align: center; margin-bottom: 30px; animation: fadeInDown 0.8s ease-out forwards; }
-        /* Shadow hitam pada teks diperkuat agar tetap terbaca meski video sangat terang */
-        .welcome-text h1 { font-size: 28px; font-weight: 800; margin-bottom: 5px; text-shadow: 0 2px 15px rgba(0,0,0,1); }
-        .welcome-text p { color: var(--primary); font-size: 14px; font-weight: 600; text-shadow: 0 1px 10px rgba(0,0,0,1); }
+
+        .welcome-text h1 { 
+            font-size: 32px; 
+            font-weight: 800; 
+            margin-bottom: 10px; 
+            color: #ffffff;
+            /* Efek Shadow Berlapis agar tulisan "Selamat Pagi" kontras di background apapun */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.8);
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-text p { 
+            color: var(--primary); 
+            font-size: 15px; 
+            font-weight: 700; 
+            /* Memberikan background semi-gelap tipis di belakang Jam agar terbaca jelas */
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
 
         .grid {
             display: grid; 
@@ -102,9 +114,9 @@
         }
 
         .card {
-            background: var(--card-bg); 
+            background: rgba(1, 10, 16, 0.6); 
             border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
             border-radius: 20px; padding: 25px 10px;
             text-align: center; cursor: pointer; 
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -116,14 +128,15 @@
         
         .card:hover { 
             transform: translateY(-8px) scale(1.02);
-            background: rgba(100, 255, 218, 0.2); 
+            background: rgba(100, 255, 218, 0.12); 
             border-color: var(--primary);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
         
-        .card i { font-size: 32px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
-        .card span { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fff; text-shadow: 1px 1px 5px rgba(0,0,0,1); }
+        .card i { font-size: 32px; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); }
+        .card span { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
 
+        /* Delay Animasi Kartu */
         .c1 { animation-delay: 0.1s; } .c1 i { color: var(--c1); }
         .c2 { animation-delay: 0.15s; } .c2 i { color: var(--c2); }
         .c3 { animation-delay: 0.2s; } .c3 i { color: var(--c3); }
@@ -149,18 +162,16 @@
 
         @media (max-width: 480px) {
             .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .welcome-text h1 { font-size: 22px; }
+            .welcome-text h1 { font-size: 24px; }
+            .welcome-text p { font-size: 12px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- VIDEO BACKGROUND - DIPASTIKAN MUNCUL & CERAH -->
     <video class="video-bg" autoplay loop muted playsinline>
         <source src="gedung.mp4" type="video/mp4">
     </video>
-
-    <!-- OVERLAY TRANSPARAN -->
     <div class="overlay"></div>
 
     <div id="loader"></div>
@@ -181,6 +192,7 @@
     <main id="dashboard-view">
         <div class="welcome-text">
             <h1 id="salam">Selamat Datang</h1>
+            <!-- Tampilan jam sekarang memiliki background pelindung agar jelas -->
             <p id="jam"></p>
         </div>
 
