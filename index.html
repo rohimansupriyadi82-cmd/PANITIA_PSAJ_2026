@@ -22,23 +22,31 @@
         body, html {
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #000; 
+            background-color: transparent; /* Dibuat transparan agar video muncul */
             color: #fff;
             overflow: hidden;
         }
 
+        /* VIDEO TETAP CERAH & JERNIH */
         .video-bg {
-            position: fixed; top: 0; left: 0; 
-            width: 100vw; height: 100vh;
-            object-fit: cover; z-index: -2;
-            filter: brightness(1.1); /* Video tetap cerah */
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
+            object-fit: cover; 
+            z-index: -10; /* Taruh di paling belakang */
         }
 
+        /* OVERLAY SANGAT TIPIS AGAR VIDEO TIDAK GELAP */
         .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* Overlay sangat tipis agar video tetap jernih */
-            background: rgba(0, 0, 0, 0.2); 
-            z-index: -1;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2); /* Hanya sedikit bayangan agar video tetap jernih */
+            z-index: -5;
         }
 
         header {
@@ -68,35 +76,33 @@
             overflow-y: auto; display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- SOLUSI AGAR TULISAN JELAS --- */
+        /* --- PERBAIKAN TULISAN AGAR JELAS --- */
         .welcome-text { 
             text-align: center; 
-            margin-bottom: 35px; 
+            margin-bottom: 30px; 
             animation: fadeInDown 0.8s ease-out forwards; 
         }
 
         .welcome-text h1 { 
-            font-size: 32px; 
+            font-size: 28px; 
             font-weight: 800; 
             margin-bottom: 10px; 
-            color: #ffffff;
-            /* Efek Shadow Berlapis agar tulisan "Selamat Pagi" kontras di background apapun */
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.8);
-            letter-spacing: -0.5px;
+            /* Bayangan teks dipertebal agar terbaca meski video cerah */
+            text-shadow: 2px 2px 8px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.5); 
         }
 
         .welcome-text p { 
             color: var(--primary); 
-            font-size: 15px; 
+            font-size: 14px; 
             font-weight: 700; 
-            /* Memberikan background semi-gelap tipis di belakang Jam agar terbaca jelas */
-            background: rgba(0, 0, 0, 0.4);
-            padding: 6px 20px;
-            border-radius: 50px;
+            /* Memberikan kotak transparan gelap di belakang Jam agar terbaca sangat jelas */
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 12px;
             display: inline-block;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(100, 255, 218, 0.3);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 3px rgba(0,0,0,1);
         }
 
         .grid {
@@ -114,7 +120,7 @@
         }
 
         .card {
-            background: rgba(1, 10, 16, 0.6); 
+            background: rgba(1, 10, 16, 0.65); /* Card sedikit gelap agar kontras */
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px; padding: 25px 10px;
@@ -128,7 +134,7 @@
         
         .card:hover { 
             transform: translateY(-8px) scale(1.02);
-            background: rgba(100, 255, 218, 0.12); 
+            background: rgba(100, 255, 218, 0.15); 
             border-color: var(--primary);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
@@ -136,7 +142,6 @@
         .card i { font-size: 32px; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); }
         .card span { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
 
-        /* Delay Animasi Kartu */
         .c1 { animation-delay: 0.1s; } .c1 i { color: var(--c1); }
         .c2 { animation-delay: 0.15s; } .c2 i { color: var(--c2); }
         .c3 { animation-delay: 0.2s; } .c3 i { color: var(--c3); }
@@ -162,16 +167,17 @@
 
         @media (max-width: 480px) {
             .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .welcome-text h1 { font-size: 24px; }
-            .welcome-text p { font-size: 12px; }
+            .welcome-text h1 { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Pastikan file gedung.mp4 tersedia di folder yang sama -->
     <video class="video-bg" autoplay loop muted playsinline>
         <source src="gedung.mp4" type="video/mp4">
     </video>
+    
     <div class="overlay"></div>
 
     <div id="loader"></div>
@@ -192,7 +198,6 @@
     <main id="dashboard-view">
         <div class="welcome-text">
             <h1 id="salam">Selamat Datang</h1>
-            <!-- Tampilan jam sekarang memiliki background pelindung agar jelas -->
             <p id="jam"></p>
         </div>
 
