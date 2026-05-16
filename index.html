@@ -13,6 +13,7 @@
             --c4: #f6d365; --c5: #a18cd1; --c6: #00f2fe; --c7: #ffa502;
             --c8: #ff6b81; --c9: #7bed9f; --c10: #70a1ff; --c11: #ff9f43;
             --c12: #ff4757; --c13: #0fbcf9; --c14: #e056fd;
+            --c15: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,22 +21,22 @@
         body, html {
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: transparent; 
+            background-color: transparent; /* Hapus background gelap */
             color: #fff; overflow-x: hidden;
         }
 
-        /* VIDEO BACKGROUND TETAP CERAH */
+        /* VIDEO BACKGROUND TETAP CERAH DAN JELAS */
         .video-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; 
             z-index: -10;
-            filter: brightness(1.1) contrast(1.05);
+            filter: brightness(1.2) contrast(1.1); /* Ditingkatkan agar lebih cerah */
         }
 
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(20px);
             border-bottom: 2px solid var(--primary);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 30px; z-index: 1000;
@@ -43,7 +44,7 @@
 
         .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .brand img { height: 35px; }
-        .brand-text b { font-size: 16px; display: block; color: #fff; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+        .brand-text b { font-size: 16px; display: block; color: #fff; text-shadow: 2px 2px 10px rgba(0,0,0,0.7); }
         .brand-text span { color: var(--primary); font-size: 10px; font-weight: 800; text-transform: uppercase; }
 
         #dashboard-view {
@@ -54,11 +55,11 @@
         .welcome-text { text-align: center; margin-bottom: 30px; }
         .welcome-text h1 { 
             font-size: 28px; font-weight: 800; 
-            text-shadow: 2px 4px 15px rgba(0,0,0,0.5);
+            text-shadow: 2px 4px 15px rgba(0,0,0,0.8);
             margin-bottom: 8px;
         }
         .welcome-text p { 
-            background: rgba(255,255,255,0.2); padding: 6px 20px; border-radius: 50px;
+            background: rgba(0,0,0,0.3); padding: 6px 20px; border-radius: 50px;
             backdrop-filter: blur(10px); border: 1px solid var(--primary);
             color: #fff; font-weight: 700; font-size: 13px;
         }
@@ -74,16 +75,16 @@
             width: 100%;
         }
 
-        /* KARTU MENU - Glassmorphism agar teks jelas di atas video cerah */
+        /* KARTU MENU TRANSPARAN AGAR VIDEO TERLIHAT */
         .card {
             background: rgba(255, 255, 255, 0.15); 
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
             border-radius: 18px;
             padding: 20px 10px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 10px; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             text-align: center;
         }
 
@@ -91,14 +92,14 @@
         .card.wide { grid-column: span 2; }
 
         .card:hover {
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-8px);
             background: rgba(255, 255, 255, 0.3);
             border-color: var(--glow-color);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2), 0 0 20px var(--glow-color);
+            box-shadow: 0 0 25px var(--glow-color);
         }
 
-        .card i { font-size: 28px; filter: drop-shadow(0 0 8px var(--glow-color)); transition: 0.3s; }
-        .card span { font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); color: #fff; }
+        .card i { font-size: 28px; filter: drop-shadow(0 0 8px var(--glow-color)); }
+        .card span { font-size: 11px; font-weight: 800; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); color: #fff; }
 
         /* WARNA IKON */
         .c1 { --glow-color: var(--c1); } .c1 i { color: var(--c1); }
@@ -115,6 +116,7 @@
         .c12{ --glow-color: var(--c12); } .c12 i { color: var(--c12); }
         .c13{ --glow-color: var(--c13); } .c13 i { color: var(--c13); }
         .c14{ --glow-color: var(--c14); } .c14 i { color: var(--c14); }
+        .c15{ --glow-color: var(--c15); } .c15 i { color: var(--c15); }
 
         #homeBtn {
             background: #ff4757; color: #fff; border: none; padding: 10px 20px;
@@ -128,6 +130,24 @@
         }
         iframe { width: 100%; height: 100%; border: none; }
 
+        /* VIEW DOKUMEN - TRANSPARAN AGAR VIDEO TERLIHAT */
+        #doc-view {
+            position: fixed; top: 70px; left: 0; width: 100%; height: calc(100vh - 70px);
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(25px);
+            display: none; z-index: 9998; padding: 30px; overflow-y: auto;
+        }
+        .doc-list { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .doc-item {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px 20px; border-radius: 12px; display: flex; align-items: center;
+            justify-content: space-between; text-decoration: none; color: #fff;
+            transition: 0.2s;
+        }
+        .doc-item:hover { background: var(--primary); color: #000; transform: scale(1.01); }
+        .doc-item i { font-size: 20px; margin-right: 15px; }
+        .doc-info { display: flex; align-items: center; font-weight: 600; }
+
         #loader {
             position: fixed; top: 0; left: 0; height: 3px; width: 0;
             background: var(--primary); z-index: 10000; transition: 0.3s;
@@ -140,16 +160,16 @@
         }
     </style>
 </head>
-<body onclick="putarMusik()"> <!-- Klik di mana saja untuk aktifkan musik -->
+<body onclick="putarMusik()">
 
-    <!-- AUDIO ELEMENT -->
+    <!-- VIDEO BACKGROUND -->
+    <video class="video-bg" autoplay loop muted playsinline id="mainVideo">
+        <source src="gedung.mp4" type="video/mp4">
+    </video>
+
     <audio id="bgMusic" loop>
         <source src="suara.mp3" type="audio/mpeg">
     </audio>
-
-    <video class="video-bg" autoplay loop muted playsinline>
-        <source src="gedung.mp4" type="video/mp4">
-    </video>
     
     <div id="loader"></div>
 
@@ -230,9 +250,38 @@
                     <i class="fa-solid fa-calendar-check"></i>
                     <span>CEK USIA SPMB</span>
                 </div>
+                <!-- MENU KE-15 -->
+                <div class="card c15 wide" onclick="bukaDocView()">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>UNDUH FORMAT</span>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- LIST DOWNLOAD DOKUMEN GITHUB -->
+    <div id="doc-view">
+        <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary); text-shadow: 0 0 10px rgba(0,0,0,0.5);">UNDUH FORMAT DOKUMEN</h2>
+        <div class="doc-list">
+            <a href="template-olah-nilai.xlsx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-excel"></i> template-olah-nilai.xlsx</div><i class="fa-solid fa-download"></i></a>
+            <a href="aktif-mengajar.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> aktif-mengajar.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="berita-acara-penyusunan-arkas.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> berita-acara-penyusunan-arkas.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="berita-acara-sertijab-kepsek.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> berita-acara-sertijab-kepsek.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="hapus-bunga-bank.xlsx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-excel"></i> hapus-bunga-bank.xlsx</div><i class="fa-solid fa-download"></i></a>
+            <a href="kaldik.jpg" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-image"></i> kaldik.jpg</div><i class="fa-solid fa-download"></i></a>
+            <a href="si-pencairan.xlsx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-excel"></i> si-pencairan.xlsx</div><i class="fa-solid fa-download"></i></a>
+            <a href="sk-bendahara-sekolah.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> sk-bendahara-sekolah.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="sk-pengangkatan-gty.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> sk-pengangkatan-gty.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="sk-tim-manajemen-bosp.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> sk-tim-manajemen-bosp.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="specimen-bos.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> specimen-bos.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="surat-permohonan-cetak-rek-koran.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> surat-permohonan-cetak-rek-koran.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="proposal-spmb-2026.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> proposal-spmb-2026.docx</div><i class="fa-solid fa-download"></i></a>
+            <a href="temlate-aplikasi-kartu-meja-V2.csv" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-csv"></i> temlate-aplikasi-kartu-meja-V2.csv</div><i class="fa-solid fa-download"></i></a>
+            <a href="template-aplikasi-nomeja.csv" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-csv"></i> template-aplikasi-nomeja.csv</div><i class="fa-solid fa-download"></i></a>
+            <a href="template-kartu-ujian.xlsx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-excel"></i> template-kartu-ujian.xlsx</div><i class="fa-solid fa-download"></i></a>
+            <a href="formulir-murid-baru-2026.pdf" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-pdf"></i> formulir-murid-baru-2026.pdf</div><i class="fa-solid fa-download"></i></a>
+        </div>
+    </div>
 
     <div id="app-view">
         <iframe id="layarApp" src=""></iframe>
@@ -240,18 +289,18 @@
 
     <script>
         const appLayar = document.getElementById('app-view');
+        const docLayar = document.getElementById('doc-view');
         const frame = document.getElementById('layarApp');
         const homeBtn = document.getElementById('homeBtn');
         const loader = document.getElementById('loader');
         const musik = document.getElementById('bgMusic');
 
-        // Fungsi untuk memutar musik (dipanggil saat klik layar)
         function putarMusik() {
             musik.play().catch(e => console.log("Menunggu interaksi pengguna..."));
         }
 
         function bukaHalaman(url) {
-            putarMusik(); // Pastikan musik jalan saat klik menu
+            putarMusik();
             loader.style.width = '40%';
             frame.onload = function() {
                 loader.style.width = '100%';
@@ -264,9 +313,16 @@
             frame.src = url;
         }
 
+        function bukaDocView() {
+            putarMusik();
+            docLayar.style.display = 'block';
+            homeBtn.style.display = 'block';
+        }
+
         function tutupHalaman() {
             frame.onload = null; 
             appLayar.style.display = 'none'; 
+            docLayar.style.display = 'none';
             homeBtn.style.display = 'none';  
             frame.src = 'about:blank';       
         }
