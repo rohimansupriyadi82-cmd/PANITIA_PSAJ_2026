@@ -21,16 +21,15 @@
         body, html {
             height: 100vh; width: 100vw;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: transparent; /* Hapus background gelap */
+            background-color: transparent; 
             color: #fff; overflow-x: hidden;
         }
 
-        /* VIDEO BACKGROUND TETAP CERAH DAN JELAS */
         .video-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; 
             z-index: -10;
-            filter: brightness(1.2) contrast(1.1); /* Ditingkatkan agar lebih cerah */
+            filter: brightness(1.2) contrast(1.1); 
         }
 
         header {
@@ -75,7 +74,6 @@
             width: 100%;
         }
 
-        /* KARTU MENU TRANSPARAN AGAR VIDEO TERLIHAT */
         .card {
             background: rgba(255, 255, 255, 0.15); 
             border: 1px solid rgba(255, 255, 255, 0.4);
@@ -130,7 +128,6 @@
         }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* VIEW DOKUMEN - TRANSPARAN AGAR VIDEO TERLIHAT */
         #doc-view {
             position: fixed; top: 70px; left: 0; width: 100%; height: calc(100vh - 70px);
             background: rgba(255, 255, 255, 0.05); 
@@ -160,16 +157,11 @@
         }
     </style>
 </head>
-<body onclick="putarMusik()">
+<body onclick="sapaGuru()">
 
-    <!-- VIDEO BACKGROUND -->
     <video class="video-bg" autoplay loop muted playsinline id="mainVideo">
         <source src="gedung.mp4" type="video/mp4">
     </video>
-
-    <audio id="bgMusic" loop>
-        <source src="suara.mp3" type="audio/mpeg">
-    </audio>
     
     <div id="loader"></div>
 
@@ -194,6 +186,7 @@
 
         <div class="grid-container">
             <div class="honeycomb-grid">
+                <!-- 15 Menu Tetap Dipertahankan -->
                 <div class="card c1 main" onclick="bukaHalaman('app-album.html')">
                     <i class="fa-solid fa-images"></i>
                     <span>ALBUM PSAJ</span>
@@ -250,7 +243,6 @@
                     <i class="fa-solid fa-calendar-check"></i>
                     <span>CEK USIA SPMB</span>
                 </div>
-                <!-- MENU KE-15 -->
                 <div class="card c15 wide" onclick="bukaDocView()">
                     <i class="fa-solid fa-folder-open"></i>
                     <span>UNDUH FORMAT</span>
@@ -259,9 +251,8 @@
         </div>
     </main>
 
-    <!-- LIST DOWNLOAD DOKUMEN GITHUB -->
     <div id="doc-view">
-        <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary); text-shadow: 0 0 10px rgba(0,0,0,0.5);">UNDUH FORMAT DOKUMEN</h2>
+        <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary);">UNDUH FORMAT DOKUMEN</h2>
         <div class="doc-list">
             <a href="template-olah-nilai.xlsx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-excel"></i> template-olah-nilai.xlsx</div><i class="fa-solid fa-download"></i></a>
             <a href="aktif-mengajar.docx" class="doc-item" download><div class="doc-info"><i class="fa-solid fa-file-word"></i> aktif-mengajar.docx</div><i class="fa-solid fa-download"></i></a>
@@ -293,14 +284,31 @@
         const frame = document.getElementById('layarApp');
         const homeBtn = document.getElementById('homeBtn');
         const loader = document.getElementById('loader');
-        const musik = document.getElementById('bgMusic');
+        let sudahDisapa = false;
 
-        function putarMusik() {
-            musik.play().catch(e => console.log("Menunggu interaksi pengguna..."));
+        // FUNGSI SUARA MENYESUAIKAN WAKTU
+        function sapaGuru() {
+            if (sudahDisapa) return; // Hanya bersuara sekali saat pertama klik
+
+            const n = new Date();
+            const h = n.getHours();
+            let salam = "Selamat Malam";
+            if(h < 11) salam = "Selamat Pagi";
+            else if(h < 15) salam = "Selamat Siang";
+            else if(h < 19) salam = "Selamat Sore";
+
+            const pesan = `${salam}, Rekan Guru. Selamat datang di Panel Mandiri Rohiman Supriyadi. Silakan pilih menu aplikasi yang Anda butuhkan.`;
+            
+            const ucapan = new SpeechSynthesisUtterance(pesan);
+            ucapan.lang = 'id-ID';
+            ucapan.rate = 1.0;
+            window.speechSynthesis.speak(ucapan);
+            
+            sudahDisapa = true;
         }
 
         function bukaHalaman(url) {
-            putarMusik();
+            sapaGuru();
             loader.style.width = '40%';
             frame.onload = function() {
                 loader.style.width = '100%';
@@ -314,7 +322,7 @@
         }
 
         function bukaDocView() {
-            putarMusik();
+            sapaGuru();
             docLayar.style.display = 'block';
             homeBtn.style.display = 'block';
         }
